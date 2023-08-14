@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<!-- Coding By CodingNepal - codingnepalweb.com -->
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title> Responsive Login and Signup Form </title>
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="css/style.css">
+                
+        <!-- Boxicons CSS -->
+        <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+                        
+    </head>
+    <body>
+        <section class="container forms">
+            <div class="form login">
+                <div class="form-content">
+                    <header>Login</header>
+                    <form action="#">
+                        <div class="field input-field">
+                            <input type="email" placeholder="Email" class="input">
+                        </div>
+
+                        <div class="field input-field">
+                            <input type="password" placeholder="Password" class="password">
+                            <i class='bx bx-hide eye-icon'></i>
+                        </div>
+
+                        <div class="form-link">
+                            <a href="#" class="forgot-pass">Forgot password?</a>
+                        </div>
+
+                        <div class="field button-field">
+                            <button>Login</button>
+                        </div>
+                    </form>
+
+                    <div class="form-link">
+                        <span>Don't have an account? <a href="#" class="link signup-link">Signup</a></span>
+                    </div>
+                </div>
+
+                <div class="line"></div>
+
+                <div class="media-options">
+                    <a href="#" class="field facebook">
+                        <i class='bx bxl-facebook facebook-icon'></i>
+                        <span>Login with Facebook</span>
+                    </a>
+                </div>
+
+                <div class="media-options">
+                    <a href="#" class="field google">
+                        <img src="#" alt="" class="google-img">
+                        <span>Login with Google</span>
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- Signup Form -->
+
+            <div class="form signup">
+                <div class="form-content">
+                    <header>Signup</header>
+                    <form action="#">
+                        <div class="field input-field">
+                            <input type="email" placeholder="Email" class="input">
+                        </div>
+
+                        <div class="field input-field">
+                            <input type="password" placeholder="Create password" class="password">
+                        </div>
+
+                        <div class="field input-field">
+                            <input type="password" placeholder="Confirm password" class="password">
+                            <i class='bx bx-hide eye-icon'></i>
+                        </div>
+
+                        <div class="field button-field">
+                            <button>Signup</button>
+                        </div>
+                    </form>
+
+                    <div class="form-link">
+                        <span>Already have an account? <a href="#" class="link login-link">Login</a></span>
+                    </div>
+                </div>
+
+                <div class="line"></div>
+
+                <div class="media-options">
+                    <a href="#" class="field facebook">
+                        <i class='bx bxl-facebook facebook-icon'></i>
+                        <span>Login with Facebook</span>
+                    </a>
+                </div>
+
+                <div class="media-options">
+                    <a href="#" class="field google">
+                        <img src="#" alt="" class="google-img">
+                        <span>Login with Google</span>
+                    </a>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- JavaScript -->
+        <script src="js/script.js"></script>
+    </body>
+</html>
+
+
+<!-- public function index()
+{
+    $projects = Projects::with('projectMembers')->get();
+    return view('project.index', compact('projects'));
+} -->
+
+
+
+  <!-- task index -->
+  <!-- @extends('layouts.app')
+
+@section('content')
+    <div class="container">
+        <h1>Task Listing</h1>
+        <a href="{{ route('task.create') }}" class="btn btn-dark mb-3">Create New Task</a>
+        
+        <div class="table-responsive">
+            <div class="card-body">
+                @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Task Name</th>
+                            <th>Description</th>
+                            <th>Project Name</th>
+                            <th>Assign By</th>
+                            <th>Assign To</th>
+                            <th>Task Date Time</th>
+                            <th>Task Status</th>
+                            <th>Is Active</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php
+                            $count = 1;
+                        @endphp
+                        @foreach ($tasks as $task)
+                            <tr>
+                                <td>{{ $count }}</td>
+                                <td>{{ $task->task_name }}</td>
+                                <td>{{ $task->description }}</td>
+                                <td>{{ $task->project->project_name }}</td>
+                                <td>{{ $task->assignedBy->name }}</td>
+                                <td>{{ $task->assignedTo->name }}</td>
+                                <td>{{ $task->task_datetime }}</td>
+                                <td>{{ $task->task_status }}</td>
+                                <td>{{ $task->is_active ? 'Active' : 'Inactive' }}</td>
+                                <td>
+                                    <div class="d-flex">
+                                        <button class="btn btn-primary btn-edit" data-toggle="modal" data-target="#editModal" data-task-id="{{ $task->id }}">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        &nbsp;
+                                        <button class="btn btn-danger btn-delete" data-task-id="{{ $task->id }}">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            @php
+                                $count++;
+                            @endphp
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap modal for editing task -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Task</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Edit task form will be loaded here via AJAX -->
+                    <div id="editFormContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+    <!-- JavaScript to handle the modal and AJAX -->
+    
+
+   <!-- task edit file  -->
+
+@extends('layouts.app')
+
+@section('content')
+
+@endsection
+
+
+
+
+
+<!-- index project model  -->
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <h1>Project Listing</h1>
+    <a href="{{ route('project.create') }}" class="btn btn-dark mb-3">Create New Project</a>
+
+    <div class="table-responsive">
+        <div class="card-body">
+            @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+            @endif
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Project Name</th>
+                        <th>Description</th>
+                        <th>Project Start Date</th>
+                        <th>Project Delivery Date</th>
+                        <th>Project Cost</th>
+                        <th>Project Head</th>
+                        <th>Project Technologie</th>
+                        <th>Project Status</th>
+                        <th>Project Team Members</th>
+                        <th>IsActive</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php
+                        $count = 1;
+                    @endphp
+                    @foreach ($projects as $project)
+                        <tr>
+                            <td>{{ $count }}</td>
+                            <td>{{ $project->project_name }}</td>
+                            <td>{{ $project->description }}</td>
+                            <td>{{ $project->project_start_data }}</td>
+                            <td>{{ $project->project_delivery_data }}</td>
+                            <td>{{ $project->project_cost }}</td>
+                            <td>{{ $project->projectHead->name }}</td>
+                            <td>{{ $project->project_technology }}</td>
+                            <td>{{ $project->project_status }}</td>
+                            <td>
+                              @if ($project->projectUser)
+                                  @foreach ($project->projectUser as $user)
+                                      {{ $user->user->name }}
+                                      @if (!$loop->last) 
+                                          ,
+                                      @endif
+                                  @endforeach
+                              @endif
+                          </td>
+                            <td>{{ $project->is_active ? 'Active' : 'Inactive' }}</td>
+                            <td>
+                                <div class="d-flex">
+                                    <button class="btn btn-primary btn-edit" data-toggle="modal" data-target="#editModal" data-project-id="{{ $project->id }}"><i class="fas fa-edit"></i></button>
+                                        &nbsp;
+                                    <button class="btn btn-danger btn-delete" data-project-id="{{ $project->id }}"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        @php
+                            $count++;
+                        @endphp
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap modal for editing project -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Project</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Edit project form will be loaded here via AJAX -->
+                <div id="editFormContainer"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript to handle the modal and AJAX -->
+<script>
+    $(document).ready(function() {
+        $('.btn-edit').on('click', function() {
+            const projectId = $(this).data('project-id');
+            const editUrl = `/project/${projectId}/edit`;
+
+            $.get(editUrl, function(response) {
+                $('#editFormContainer').html(response);
+            });
+        });
+
+        $('.btn-delete').on('click', function(e) {
+            e.preventDefault();
+            const projectId = $(this).data('project-id');
+            const url = `/project/${projectId}`;
+            const csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: url,
+                        type: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        success: function(response) {
+                            Swal.fire(
+                                'Deleted!',
+                                response.message,
+                                'success'
+                            );
+                            window.location.reload();
+                        },
+                        error: function(error) {
+                            console.error(error);
+                            Swal.fire(
+                                'Error!',
+                                'Delete failed.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+@endsection
+
+
+
