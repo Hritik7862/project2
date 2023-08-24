@@ -21,7 +21,7 @@ use App\Models\Task;
 */
 
 Route::get('/', function () {
-    return view('home');
+    return view('/home');
 });
 
 Auth::routes();
@@ -37,7 +37,7 @@ Route::delete('/user/{user}', [UserController::class,'destroy'])->name('user.des
 
 
 
-Route::get('/user/{user}', [UserController::class,'update'])->name('user.update')->middleware('auth');
+Route::put('/user/{id}',[ UserController::class,'update'])->name('user.update');
 Route::post('/promote-admin', [UserController::class, 'promoteToAdmin'])->name('promote.admin');
 Route::get('/admin-listing', [UserController::class,'showAdminListing'])->name('user.admin-listing');
 
@@ -53,7 +53,7 @@ Route::get('/admin-listing', [UserController::class,'showAdminListing'])->name('
  Route::delete('task/{id}', [TaskController::class, 'destroy'])->name('task.destroy')->middleware('auth');
  Route::get('/task/{id}/edit', [TaskController::class ,'edit'])->name('task.edit')->middleware('auth');
  Route::put('/task/{id}', [TaskController::class, 'update'])->name('task.update')->middleware('auth');
-
+Route::get('/projects/getName',[ProjectsController::class,'getName']);
  
 Route::resource('/project',ProjectsController::class)->middleware('auth');
 Route::post('/project', [ProjectsController::class ,'store'])->name('projects.store')->middleware('auth');

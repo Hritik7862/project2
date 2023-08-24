@@ -5,12 +5,15 @@
     <h1>Project Listing</h1>
     <a href="{{ route('project.create') }}" class="btn btn-dark mb-3">Create New Project</a>
 
-    <div class="table-responsive">
-        <div class="card-body">
-            @if (session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
+    @if (session('success'))
+        <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+    <script>
+        setTimeout(function () {
+            window.location.href = "{{ route('project.index') }}"; 
+        }, 1000); 
+    </script>
             @endif
             <table class="table table-bordered table-hover">
                 <thead>
@@ -58,11 +61,11 @@
                                              ,
                                          @endif
                                      @else
-                                         N/A
+                                       
                                      @endif
                                  @endforeach
                              @else
-                                 N/A
+                               
                              @endif
                        </td>
 
@@ -70,7 +73,9 @@
                             <td>
                                 <div class="d-flex">
                                     <button class="btn btn-primary btn-edit" data-toggle="modal" data-target="#editModal" data-project-id="{{ $project->id }}"><i class="fas fa-edit"></i></button>
-                                        &nbsp;
+                                    <!-- <a href="{{ route('project.edit', $project->id) }}" class="btn btn-primary"><i class="fas fa-edit"></i></a> -->
+    
+                                    &nbsp;
                                     <button class="btn btn-danger btn-delete" data-project-id="{{ $project->id }}"><i class="fas fa-trash-alt"></i></button>
                                 </div>
                             </td>
@@ -96,14 +101,13 @@
                 </button>
             </div>
             <div class="modal-body">
-                <!-- Edit project form will be loaded here via AJAX -->
                 <div id="editFormContainer"></div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- JavaScript to handle the modal and AJAX -->
+<!-- JavaScript to handle the modal and AJAX     -->
 <script>
     $(document).ready(function() {
         $('.btn-edit').on('click', function() {
@@ -114,7 +118,6 @@
                 $('#editFormContainer').html(response);
             });
         });
-
         $('.btn-delete').on('click', function(e) {
             e.preventDefault();
             const projectId = $(this).data('project-id');
@@ -160,3 +163,5 @@
     });
 </script>
 @endsection
+
+

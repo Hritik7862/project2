@@ -15,11 +15,18 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+public function index()
     {
-        $tasks=task::all();
-        return view('task.index' ,compact('tasks'));
-    }
+        $tasks = Task::select('tasks.*')
+            ->leftJoin('users as assignedBy', 'tasks.assigned_by', '=', 'assignedBy.id')
+            ->leftJoin('users as assignedTo', 'tasks.assigned_to', '=', 'assignedTo.id')
+            ->whereNull('assignedBy.deleted_at')
+            ->whereNull('assignedTo.deleted_at')
+            ->get();
+
+            return view('task.index' ,compact('tasks'));  
+          }
+
 
     /**
      * Show the form for creating a new resource.
@@ -29,12 +36,12 @@ class TaskController extends Controller
     public function create()
     {
         //
-        $projects = Projects::all();
-
+        $projects = Projects::with('projectMembers')->get();
+        // dd($projects);
         // Fetch all users to populate the "Assign By" and "Assign To" dropdowns
         $users = User::all();
 
-        return view('task.create', compact('projects', 'users'));
+        return view('task.create', compact('projects','users'));
     }
 
     /**
@@ -48,8 +55,8 @@ class TaskController extends Controller
      {
        
         $rules = [
-            'project_id' => 'required|exists:projects,id', // Assuming projects table has a column 'id'
-            'assigned_by' => 'required|exists:users,id', // Assuming users table has a column 'id'
+            'project_id' => 'required|exists:projects,id', 
+            'assigned_by' => 'required|exists:users,id', 
             'assigned_to' => 'required|exists:users,id',
             'description' => 'required|string',
             'task_datetime' => 'required|date',
@@ -76,7 +83,7 @@ class TaskController extends Controller
         $task->save();
 
         return redirect()->route('task.index')->with('success', 'Task created successfully!');
-     } 
+    } 
 
     /**
      * Display the specified resource.

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use League\Flysystem\Visibility;
 
 class UserController extends Controller
 {
@@ -70,12 +71,39 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
-    {
-        //
-        $user->update($request->all());
-        return response()->json(['message' => 'User updated successfully']);
-    }
+public function update(Request $request, $id)
+{
+    
+    $validatedData = $request->validate([
+        'name' => 'required|string|max:255',
+        'user_name' => 'required|string|max:50|unique:users,user_name,' . $id,
+        'email' => 'required|email|max:255|unique:users,email,' . $id,
+        'mobile' => 'required|numeric|max:9999999999|unique:users,mobile,' . $id,
+        'is_active' => 'required|boolean',
+    ]);
+    
+    // Fetch the user by ID
+    $user = User::find($id);
+
+    // Update the user data
+    $user->name = $request->input('name');
+    $user->user_name = $request->input('user_name');
+    $user->email = $request->input('email');
+    $user->mobile = $request->input('mobile');
+    $user->is_active = $request->input('is_active');
+
+    $user->save();
+
+    return response()->json([
+        'name' => $user->name,
+        'user_name' => $user->user_name,
+        'email' => $user->email,
+        'mobile' => $user->mobile,
+        'is_active' => $user->is_active,
+        'message' => 'User updated successfully.',
+    ]);
+}
+
 
     /**
      * Remove the specified resource from storage.
@@ -107,3 +135,8 @@ public function showAdminListing()
 
 
 }
+
+
+
+
+   

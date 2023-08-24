@@ -2,8 +2,9 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container ">
     <h1>Admin Users Listing</h1>
+    <a href="/user" class="btn btn-primary mb-3"> User Listing</a>
     <table class="table">
         <thead>
             <tr>
