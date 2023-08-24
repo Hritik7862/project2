@@ -51,6 +51,10 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Projects::class, 'project_user', 'user_id', 'project_id' );
     }
+    public function Admin()
+    {
+        return $this->admin === 1; 
+    }
 }
 
 

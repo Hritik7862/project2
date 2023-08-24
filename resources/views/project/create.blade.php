@@ -1,109 +1,101 @@
 @extends('layouts.app')
 
 @section('project')
-    <div class="container border mt-3">
-        <div class="text-center my-5">
-            <h1 style="font-weight: bolder">Project Management</h1>
-        </div>
 
-        <form method="post" action="{{ url('/project') }}" autocomplete="off">
-            @csrf
-            <div class="container">
+<div class="container mt-3">
+    <div class="card shadow-lg p-3 mb-5 bg-body rounded">
+        <div class="card-body">
+            <h1 class="card-title text-center font-weight-bold mb-4">Project Management</h1>
+
+            <form method="post" action="{{ url('/project') }}" autocomplete="off">
+                @csrf
                 <div class="row">
-                    <!-- item 1 -->
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="name" class="form-label float-start"><h5>Project Name</h5></label>
-                            <input type="text" name="project_name" class="form-control bg-light" style="border: 1px solid #ccc;" id="name" placeholder="Project Name" required>
-                        </div>
+                    <!-- Project Name -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><h5>Project Name</h5></label>
+                        <input type="text" name="project_name" class="form-control" placeholder="Project Name" required >
                     </div>
 
-                    <!-- item 2 -->
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="exampleFormControlInput1" class="form-label float-start"><h5>Description</h5></label>
-                            <input type="text" name="description" class="form-control bg-light" style="border: 1px solid #ccc;" id="TaskName" placeholder="Description" required>
-                        </div>
+                    <!-- Description -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><h5>Description</h5></label>
+                        <input type="text" name="description" class="form-control" placeholder="Description" required>
                     </div>
-
-                    <!-- item 3 -->
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="exampleFormControlInput1" class="form-label float-start"><h5>Project Start Date</h5></label>
-                            <input type="date" name="project_start_data" class="form-control bg-light" style="border: 1px solid #ccc;" id="project_start_date" required>
-                        </div>
-                    </div>
-
-                    <!-- item 4 -->
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="exampleFormControlInput1" class="form-label float-start"><h5>Project Delivery Date</h5></label>
-                            <input type="date" name="project_delivery_data" class="form-control bg-light" style="border: 1px solid #ccc;" id="project_delivery_date" required>
-                        </div> 
-                    </div>
-
-                    <!-- item 5 -->
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="exampleFormControlInput1" class="form-label float-start"><h5>Project Cost</h5></label>
-                            <input type="number" name="project_cost" class="form-control bg-light" style="border: 1px solid #ccc;" id="price" placeholder="Project Cost" required>
-                        </div>
-                    </div>
-
-                    <!-- item 6 -->
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="exampleFormControlTextarea1" class="form-label float-start"><h5>Project Head</h5></label>
-                            <input type="hidden" name="project_head" id="projecthead_id" value="">
-                            <input type="text" name="" class="form-control bg-light" style="border: 1px solid #ccc;" id="projecthead" rows="3" readonly hidden>
-                            <select id='ph' class="form-control bg-light" style="border: 1px solid #ccc;" onchange="updateProjectHeadName(this)">
-                                <option value=''>Select One</option>
-                                @foreach($userdata as $key)
-                                    <option value="{{$key['id']}}">{{$key['name']}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="exampleFormControlInput1" class="form-label float-start"><h5>Project Technologie</h5></label>
-                            <input type="text" name="project_technology" class="form-control bg-light" style="border: 1px solid #ccc;" id="based" placeholder="Project Technology" required>
-                        </div>
-                    </div>
-
-                    <div class="col-md-12">
-                        <div class="mb-3">
-                            <label for="exampleFormControlTextarea1" class="form-label float-start"><h5>Project Team Members</h5></label>
-                            <input class="form-control" name="project_members" mbsc-input data-dropdown="true" data-tags="true" id="tm" type="hidden" />
-                            <input class="form-control"  mbsc-input data-dropdown="true" data-tags="true" id="tm2" type="text" />
-                            <select onchange="members()"  id='selectMembers' class="form-control bg-light" style="border: 1px solid #ccc;">
-                                <option value="name" mbsc-input id="my-input" data-dropdown="true" data-tags="true">--Select Any--</option>
-                                @foreach($userdata as $val)
-                                    <option value="<?=$val['id'];?>"><?=$val['name'];?></option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-label float-start">
-                            <label for="is_active"><h5>Is Active</h5></label><br>
-                            <label for="active">Active</label>
-                            <input type="radio" name="is_active" value="1" required>
-                            <label for="inactive">Inactive</label>
-                            <input type="radio" name="is_active" value="0" required>
-                        </div>
                 </div>
-            </div>
 
-            <!-- submit button -->
-            <div class="d-grid mb-3 container">
-                <button name="btn" value="project" class="btn-dark button">Submit <i class="fa fa-solid fa-arrow-right"></i></button>
-            </div>
-        </form>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label float-start"><h5>Project Start Date</h5></label>
+                     <input type="date" name="project_start_data" class="form-control bg-light" style="border: 1px solid #ccc;" id="project_start_date" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                    <label for="exampleFormControlInput1" class="form-label float-start"><h5>Project Delivery Date</h5></label>
+                    <input type="date" name="project_delivery_data" class="form-control bg-light" style="border: 1px solid #ccc;" id="project_delivery_date"  required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><h5>Project Cost</h5></label>
+                        <input type="number" name="project_cost" class="form-control" placeholder="Project Cost" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><h5>Project Head</h5></label>
+                        <select id='ph' class="form-control" onchange="updateProjectHeadName(this)" required>
+                            <option value=''>Select One</option>
+                            @foreach($userdata as $key)
+                                <option value="{{$key['id']}}">{{$key['name']}}</option>
+                            @endforeach
+                        </select>
+                        <input type="hidden" name="project_head" id="projecthead_id" value="">
+                        <input type="text" name="project_head_name" class="form-control mt-2" id="projecthead" readonly hidden>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label"><h5>Project Technology</h5></label>
+                        <input type="text" name="project_technology" class="form-control" placeholder="Project Technology" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label"><h5>Project Team Members</h5></label>
+                        <select id="selectMembers" class="js-example-basic-multiple form-control" multiple>
+                            @foreach($userdata as $val)
+                                <option value="{{ $val['id'] }}">{{ $val['name'] }}</option>
+                            @endforeach
+                        </select>
+                        <input type="hidden" name="project_members" id="tm" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label"><h5>Is Active</h5></label><br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="is_active" value="1" required>
+                            <label class="form-check-label">Active</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="is_active" value="0" required>
+                            <label class="form-check-label">Inactive</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 mb-3">
+                        <button name="btn" value="project" class="btn btn-dark btn-sm rounded-pill">Submit <i class="fa fa-solid fa-arrow-right"></i></button>
+                    </div>
+            </form>
+        </div>
     </div>
+</div>
 
-    <script>
+
+
+ <script>
 
 function members(event){
     // console.log(window.event.target.options );
@@ -125,8 +117,26 @@ function members(event){
 
         $('#project_delivery_date').attr('min', currentDate);
     });
-    </script>
+  
+    
+    $(document).ready(function () {
+        const currentDate = new Date().toISOString().split('T')[0];
+
+        $('#project_start_date').attr('min', currentDate);
+        $('#project_delivery_date').attr('min', currentDate);
+
+        $('.js-example-basic-multiple').select2(); 
+
+
+        $('#selectMembers').on('change', function () {
+            const selectedMembers = $(this).val();
+            $('#tm').val(selectedMembers);
+        });
+    });
+    
+</script>
 @endsection
+
 
 
 

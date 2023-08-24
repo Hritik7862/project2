@@ -21,6 +21,8 @@
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
@@ -36,21 +38,21 @@
 
                
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
-                        <!-- Authentication Links -->
                         @auth
-                        <li class="nav-item">
-                                <a class="nav-link" href='/user'><h4>User Listing</h4></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href='/project'><h4>Project Listing</h4></a>
-                            </li>
-                        <li class="nav-item">
-                                <a class="nav-link" href='/task'><h4>Task Listing</h4></a>
-                            </li>
-                        @endauth
-                    </ul>
+                        @if(auth()->user()->Admin())
+                               <li class="nav-item">
+                                   <a class="nav-link" href='/user'><h4>User Listing</h4></a>
+                               </li>
+                           @endif
+                           <li class="nav-item">
+                               <a class="nav-link" href='/project'><h4>Project Listing</h4></a>
+                           </li>
+                           <li class="nav-item">
+                               <a class="nav-link" href='/task'><h4>Task Listing</h4></a>
+                           </li>
+                       @endauth
+                   </ul>
 
 
                     <!-- Right Side Of Navbar -->
@@ -65,10 +67,11 @@
 
                             @if (Route::has('register'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                    <a class="nav-link" hidden href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
                             @endif
                         @else
+
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                    {{ Auth::user()->name }}
@@ -88,6 +91,7 @@
                             </li>
                         @endguest
                     </ul>
+
                 </div>
             </div>
         </nav>
@@ -99,9 +103,6 @@
     </div>
 </body>
 </html>
-
-
-
 
 
 

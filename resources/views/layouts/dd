@@ -221,6 +221,111 @@
 
 
 
+<!-- task index edit model -->
+<div class="modal fade" id="editTaskModal" tabindex="-1" role="dialog" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editTaskModalLabel">Edit Task</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+     $(document).ready(function () {
+            // Edit Task Modal
+            $('.btn-edit').on('click', function () {
+                const taskId = $(this).data('task-id');
+                const modal = $('#editTaskModal');
+
+                // Fetch task data using AJAX and populate the modal fields
+                $.ajax({
+                    url: `/task/${taskId}/edit`,
+                    type: 'GET',
+                    success: function (response) {
+                        modal.find('.modal-body').html(response);
+                    },
+                    error: function (error) {
+                        console.error(error);
+                    },
+                });
+            });
+
+            // Update Task
+            $('#updateTaskBtn').on('click', function () {
+                const modal = $('#editTaskModal');
+                const taskId = modal.find('.btn-edit').data('task-id');
+                const formData = modal.find('form').serialize();
+
+                $.ajax({
+                    url: `/task/${taskId}`,
+                    type: 'PUT',
+                    data: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function (response) {
+                        modal.modal('hide');
+                    },
+                    error: function (error) {
+                        console.error(error);
+                    },
+                });
+            });
+           
+            $('.btn-delete').on('click', function () {
+                const taskId = $(this).data('task-id');
+                
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `/task/${taskId}`,
+                            type: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                            },
+                            success: function (response) {
+                             
+                                $(`.btn-delete[data-task-id="${taskId}"]`).closest('tr').remove();
+                                
+                                Swal.fire(
+                                    'Deleted!',
+                                    'The task has been deleted.',
+                                    'success'
+                                );
+                            },
+                            error: function (error) {
+                                console.error(error);
+                            },
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+@endsection
+
+<script>
+ 
+        </script>
+
+ <!-- task model edit in model |> -->
+
 
 
 <!-- index project model  -->
@@ -377,3 +482,1116 @@
 
 
 
+
+
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <h1>User Listing</h1>
+    <a href="{{ route('register') }}" class="btn btn-dark mb-3">New User Create</a>
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th>Name</th>
+                <th>UserName</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>Active</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($users as $user)
+                <tr>
+                    <td>
+                        <input type="checkbox" class="user-checkbox" data-user-id="{{ $user->id }}">
+                    </td>
+                    <td>{{ $user->name }}</td>
+                    <td>{{ $user->user_name }}</td>
+                    <td>{{ $user->email }}</td>
+                    <td>{{ $user->mobile ?? 'N/A' }}</td>
+                    <td>{{ $user->is_active ? 'Yes' : 'No' }}</td>
+                    <td>
+                        <button class="btn btn-primary btn-update" data-user-id="{{ $user->id }}" data-toggle="modal" data-target="#updateModal">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-delete" data-user-id="{{ $user->id }}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <button class="btn btn-success" id="promote-admin-btn">Users to Admin</button>
+    <a href="{{ route('user.admin-listing') }}" class="btn btn-primary">Admin Listing</a>
+</div>
+
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form class="update-form">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateModalLabel">Update User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user_name">UserName</label>
+                        <input type="text" class="form-control" name="user_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mobile">Mobile</label>
+                        <input type="text" class="form-control" name="mobile" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="is_active">Active</label>
+                        <select class="form-control" name="is_active" required>
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('.btn-update').on('click', function() {
+            const userId = $(this).data('user-id');
+            const userRow = $(this).closest('tr');
+            const name = userRow.find('td:eq(1)').text();
+            const userName = userRow.find('td:eq(2)').text();
+            const email = userRow.find('td:eq(3)').text();
+            const mobile = userRow.find('td:eq(4)').text();
+            const isActive = userRow.find('td:eq(5)').text().toLowerCase() === 'yes';
+
+            $('#updateModal input[name="id"]').val(userId);
+            $('#updateModal input[name="name"]').val(name);
+            $('#updateModal input[name="user_name"]').val(userName);
+            $('#updateModal input[name="email"]').val(email);
+            $('#updateModal input[name="mobile"]').val(mobile);
+            $('#updateModal select[name="is_active"]').val(isActive ? '1' : '0');
+        });
+
+        $('.update-form').on('submit', function(e) {
+            e.preventDefault();
+
+            const formData = $(this).serialize();
+            const userId = $('input[name="id"]').val();
+            const url = `/user/${userId}`;
+
+            const csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+            $.ajax({
+                url: url,
+                type: 'PUT',
+                data: formData,
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                success: function(response) {
+                    $('#updateModal').modal('hide');
+                    const userRow = $(`.btn-update[data-user-id="${userId}"]`).closest('tr');
+                    userRow.find('td:eq(1)').text(response.name);
+                    userRow.find('td:eq(2)').text(response.user_name);
+                    userRow.find('td:eq(3)').text(response.email);
+                    userRow.find('td:eq(4)').text(response.mobile);
+                    userRow.find('td:eq(5)').text(response.is_active ? 'Yes' : 'No');
+                    
+                    Swal.fire({
+                        title: 'Success',
+                        text: response.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                },
+                error: function(error) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'An error occurred while updating the user.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    console.error(error);
+                }
+            });
+        });
+
+        $('.btn-delete').on('click', function(e) {
+            e.preventDefault();
+            // ... (delete logic)
+        });
+
+        $('#promote-admin-btn').on('click', function(e) {
+            e.preventDefault();
+        });
+    });
+</script>
+@endsection
+<button class="btn btn-success" id="promote-admin-btn" style="display: none;">Promote to Admin</button>
+
+
+$.ajax({
+        url: '/promote-admin',
+        type: 'POST',
+        data: {
+            _token: csrfToken,
+            users: selectedUserIds
+        },
+        success: function(response) {
+            // Handle the success response
+            alert(response.message);
+
+            // Update table rows dynamically
+            selectedUserIds.forEach(function(userId) {
+                updateTableRow(userId, response.data[userId]);
+            });
+        },
+        error: function(error) {
+            // Handle the error response
+            console.error(error);
+        }
+    });
+});
+
+
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <h1>User Listing</h1>
+    <a href="{{ route('register') }}" class="btn btn-dark mb-3">New User Create</a>
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>S Admin</th>
+                <th>Name</th>
+                <th>UserName</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>Active</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($users as $user)
+                <tr>
+                    <td>
+                        <input type="checkbox" class="user-checkbox" data-user-id="{{ $user->id }}">
+                    </td>
+                    <td>{{ $user->name }}</td>
+                    <td>{{ $user->user_name }}</td>
+                    <td>{{ $user->email }}</td>
+                    <td>{{ $user->mobile ?? 'N/A' }}</td>
+                    <td>{{ $user->is_active ? 'Yes' : 'No' }}</td>
+                    <td>
+                        <button class="btn btn-primary btn-update" data-user-id="{{ $user->id }}" data-toggle="modal" data-target="#updateModal">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-delete" data-user-id="{{ $user->id }}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <button class="btn btn-success" id="promote-admin-btn" style="display: none;">Promote to Admin</button>
+    <a href="{{ route('user.admin-listing') }}" class="btn btn-primary">Admin Listing</a>
+</div>
+
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form class="update-form">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateModalLabel">Update User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user_name">UserName</label>
+                        <input type="text" class="form-control" name="user_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mobile">Mobile</label>
+                        <input type="text" class="form-control" name="mobile" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="is_active">Active</label>
+                        <select class="form-control" name="is_active" required>
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function() {
+        $('.btn-update').on('click', function() {
+            const userId = $(this).data('user-id');
+            const userRow = $(this).closest('tr');
+            const name = userRow.find('td:eq(1)').text();
+            const userName = userRow.find('td:eq(2)').text();
+            const email = userRow.find('td:eq(3)').text();
+            const mobile = userRow.find('td:eq(4)').text();
+            const isActive = userRow.find('td:eq(5)').text().toLowerCase() === 'yes';
+
+            $('#updateModal input[name="id"]').val(userId);
+            $('#updateModal input[name="name"]').val(name);
+            $('#updateModal input[name="user_name"]').val(userName);
+            $('#updateModal input[name="email"]').val(email);
+            $('#updateModal input[name="mobile"]').val(mobile);
+            $('#updateModal select[name="is_active"]').val(isActive ? '1' : '0');
+        });
+
+        $('.update-form').on('submit', function(e) {
+            e.preventDefault();
+
+            const formData = $(this).serialize();
+            const userId = $('input[name="id"]').val();
+            const url = `/user/${userId}`;
+
+            const csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+            $.ajax({
+                url: url,
+                type: 'PUT',
+                data: formData,
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                success: function(response) {
+                    $('#updateModal').modal('hide');
+                    const userRow = $(`.btn-update[data-user-id="${userId}"]`).closest('tr');
+                    userRow.find('td:eq(1)').text(response.name);
+                    userRow.find('td:eq(2)').text(response.user_name);
+                    userRow.find('td:eq(3)').text(response.email);
+                    userRow.find('td:eq(4)').text(response.mobile);
+                    userRow.find('td:eq(5)').text(response.is_active ? 'Yes' : 'No');
+                    
+                    Swal.fire({
+                        title: 'Success',
+                        text: response.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                },
+                error: function(error) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'An error occurred while updating the user.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    console.error(error);
+                }
+            });
+        });
+
+        $('.btn-delete').on('click', function(e) {
+    e.preventDefault();
+    
+    const userId = $(this).data('user-id');
+    
+    // Show a confirmation dialog using SweetAlert
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const csrfToken = $('meta[name="csrf-token"]').attr('content');
+            
+            // Send an AJAX request to delete the user
+            $.ajax({
+                url: `/user/${userId}`, // Update the URL as per your route
+                type: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                success: function(response) {
+                    // Remove the deleted row from the table
+                    $(`.btn-delete[data-user-id="${userId}"]`).closest('tr').remove();
+                    
+                    Swal.fire({
+                        title: 'Deleted!',
+                        text: response.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                },
+                error: function(error) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'An error occurred while deleting the user.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    console.error(error);
+                }
+            });
+        }
+    });
+});
+    });
+    $('#promote-admin-btn').on('click', function() {
+    const selectedUserIds = [];
+
+    $('.user-checkbox:checked').each(function() {
+        selectedUserIds.push($(this).data('user-id'));
+    });
+
+    if (selectedUserIds.length === 0) {
+        alert('Please select users to promote to admin.');
+        return;
+    }
+
+    const csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+    $.ajax({
+        url: '/promote-admin',
+        type: 'POST',
+        data: {
+            _token: csrfToken,
+            users: selectedUserIds
+        },
+        success: function(response) {
+            // Handle the success response
+            alert(response.message);
+
+            // Update table rows dynamically
+            selectedUserIds.forEach(function(userId) {
+                updateTableRow(userId, response.data[userId]);
+            });
+        },
+        error: function(error) {
+            // Handle the error response
+            console.error(error);
+        }
+    });
+});
+
+</script>
+@endsection
+
+
+createss
+@extends('layouts.app')
+
+@section('content')
+<div class="container mt-3">
+    <div class="card ">
+        <div class="card-body">
+            <div class="text-center my-5 "><h1 style="font-weight:bolder">Task Management</h1></div>
+
+            <form method="post" action="/task" autocomplete="off">
+                @csrf
+                <div class="container">
+                    <div class="row">
+                        <!-- item 1 -->
+                        <div class="col-4">
+                            <div class="mb-3">
+                                <label for="project_id" class="form-label float-start"><h5>Project Name</h5></label>
+                                <select name="project_id" class="form-control bg-light" onchange="subjects(this)" id='project_name'>
+                                    <option value="">Select Project</option>
+                                    @foreach($projects as $project)
+                                    <option value="{{ $project->id }}">{{ $project->project_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- item 2 -->
+                        <div class="col-4">
+                            <div class="mb-3">
+                                <label for="assigned_by" class="form-label float-start" hidden>
+                                    <!-- <h5>Assign By</h5> -->
+                                </label>
+                                <select name="assigned_by" class="form-control bg-light" required hidden >
+                                    <option value="{{ auth()->user()->id }}" hidden>{{ auth()->user()->name }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- item 3 -->
+                        <div class="col-4">
+                            <div class="mb-3">
+                                <label for="assigned_to" class="form-label float-start" ><h5>Assign To</h5></label>
+                                <select name="assigned_to" class="form-control bg-light" required  id="assignedToSelect" >
+                                    <option value="">Select User</option>
+                                    @foreach($users as $user)
+                                        @if($user->id !== auth()->user()->id)
+                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- item 4 -->
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="description" class="form-label float-start"><h5>Description</h5></label>
+                                <textarea name="description" class="form-control bg-light" style="border:0" rows="3" required></textarea>
+                            </div>
+                        </div>
+
+                        <!-- item 5 -->
+                        <div class="col-4">
+                            <div class="mb-3">
+                                <label for="task_datetime" class="form-label float-start"><h5>Task Date Time</h5></label>
+                                <input type="datetime-local" id="task_datetime" name="task_datetime" class="form-control bg-light" required>
+                            </div>
+                        </div>
+
+                        <!-- item 6 -->
+                        <div class="col-4">
+                            <div class="mb-3">
+                                <label for="task_name" class="form-label float-start"><h5>Task Name</h5></label>
+                                <input type="text" name="task_name" class="form-control bg-light" required>
+                            </div>
+                        </div>
+
+                    
+
+                        <div class="form-label float-start">
+                            <label for="is_active"><h5>Is Active</h5></label><br>
+                            <label for="active">Active</label>
+                            <input type="radio" name="is_active" value="1" required>
+                            <label for="inactive">Inactive</label>
+                            <input type="radio" name="is_active" value="0" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- submit button -->
+                <div class="d-grid mb-3 container">
+                    <button type="submit" class="btn btn-dark">Submit <i class="fa fa-solid fa-arrow-right"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+
+function subjects(project_name){
+    var selectedOption = project_name.options[project_name.selectedIndex];
+    var projectHeadId = selectedOption.value;
+    console.log(projectHeadId);
+
+    $.ajax({
+        url: '/projects/getName', 
+        data: { name: projectHeadId },
+        type: 'get',
+        success: function(data) {
+            var assignToSelect = document.getElementById('assignedToSelect');
+            assignToSelect.innerHTML = '<option value="">Select User</option>';
+
+            data.users.forEach(function(user) {
+                var option = document.createElement('option');
+                option.value = user_id;
+                option.text = name;
+                assignToSelect.appendChild(option);
+            });
+        },
+        error: function(xhr, status, error) {
+            console.log(error); 
+        }
+    });
+}
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const taskDateTimeInput = document.getElementById('task_datetime');
+        const now = new Date().toISOString().slice(0, 16); 
+
+        taskDateTimeInput.min = now;
+    });
+           
+</script>
+@endsection
+
+
+
+
+
+
+<a href= "http://127.0.0.1:8000/projects/getName?name" > hello</a>
+   
+task create 
+@extends('layouts.app')
+
+@section('content')
+<div class="container mt-3">
+    <div class="card ">
+        <div class="card-body">
+            <div class="text-center my-5 "><h1 style="font-weight:bolder">Task Management</h1></div>
+
+            <form method="post" action="/task" autocomplete="off">
+                @csrf
+                <div class="container">
+                    <div class="row">
+                        <!-- item 1 -->
+                        <div class="col-4">
+                            <div class="mb-3">
+                                <label for="project_id" class="form-label float-start"><h5>Project Name</h5></label>
+                                <select name="project_id" class="form-control bg-light" onchange="subjects(this)" id='project_name'>
+                                    <option value="">Select Project</option>
+                                    @foreach($projects as $project)
+                                    <option value="{{ $project->id }}">{{ $project->project_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- item 2 -->
+                        <div class="col-4">
+                            <div class="mb-3">
+                                <label for="assigned_by" class="form-label float-start" hidden>
+                                    <!-- <h5>Assign By</h5> -->
+                                </label>
+                                <select name="assigned_by" class="form-control bg-light" required hidden >
+                                    <option value="{{ auth()->user()->id }}" hidden>{{ auth()->user()->name }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- item 3 -->
+                        <div class="col-4">
+                            <div class="mb-3">
+                                <label for="assigned_to" class="form-label float-start" ><h5>Assign To</h5></label>
+                                <select name="assigned_to" class="form-control bg-light" required  id="assignedToSelect" >
+                                    <option value="">Select User</option>
+                                    @foreach($users as $user)
+                                        @if($user->id !== auth()->user()->id)
+                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- item 4 -->
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="description" class="form-label float-start"><h5>Description</h5></label>
+                                <textarea name="description" class="form-control bg-light" style="border:0" rows="3" required></textarea>
+                            </div>
+                        </div>
+
+                        <!-- item 5 -->
+                        <div class="col-4">
+                            <div class="mb-3">
+                                <label for="task_datetime" class="form-label float-start"><h5>Task Date Time</h5></label>
+                                <input type="datetime-local" id="task_datetime" name="task_datetime" class="form-control bg-light" required>
+                            </div>
+                        </div>
+
+                        <!-- item 6 -->
+                        <div class="col-4">
+                            <div class="mb-3">
+                                <label for="task_name" class="form-label float-start"><h5>Task Name</h5></label>
+                                <input type="text" name="task_name" class="form-control bg-light" required>
+                            </div>
+                        </div>
+
+                    
+
+                        <div class="form-label float-start">
+                            <label for="is_active"><h5>Is Active</h5></label><br>
+                            <label for="active">Active</label>
+                            <input type="radio" name="is_active" value="1" required>
+                            <label for="inactive">Inactive</label>
+                            <input type="radio" name="is_active" value="0" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- submit button -->
+                <div class="d-grid mb-3 container">
+                    <button type="submit" class="btn btn-dark">Submit <i class="fa fa-solid fa-arrow-right"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+
+function subjects(project_name) {
+    var selectedOption = project_name.options[project_name.selectedIndex];
+    var projectId = selectedOption.value;
+    console.log(projectId);
+
+    $.ajax({
+        url: '/projects/getName', 
+        data: { name: projectId },
+        type: 'get',
+        success: function(data) {
+            console.log(data);
+            var assignToSelect = document.getElementById('assignedToSelect');
+            assignToSelect.innerHTML = '<option value="">Select User</option>';
+             
+            data.users.forEach(function(user) {
+                var option = document.createElement('option');
+                option.value = user.id;
+                option.text = user.name;
+                assignToSelect.appendChild(option);
+            });
+        },
+        error: function(xhr, status, error) {
+            console.log(error); 
+        }
+    });
+}
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const taskDateTimeInput = document.getElementById('task_datetime');
+        const now = new Date().toISOString().slice(0, 16); 
+
+        taskDateTimeInput.min = now;
+    });
+           
+</script>
+@endsection
+
+document,addEventListener('DOMContentloaded', function(){
+    const taskDateTimeInput = document.getElementById('task_datetime');
+    taskDateTimeInput.min = new;
+
+});
+ 
+<!-- task create -->
+
+pasprot  
+ final eyar markshit
+ studay markshit  
+
+   selected 2 ijn project
+
+ </div>
+                    <div class="col-md-12">
+                   <div class="mb-3">
+          <label for="exampleFormControlTextarea1" class="form-label float-start"><h5>Project Team Members</h5></label>
+           <input id="tm" class="form-control" name="project_members" type="hidden" hidden />
+           <input id="tm2" class="form-control" type="text" onclick="toggleMemberOptions()" readonly hidden/>
+          <select class="js-example-basic-multiple" name="states[]" multiple="multiple">
+          <option value="name" mbsc-input id="my-input" data-dropdown="true" data-tags="true">--Select Any--</option>
+            @foreach($userdata as $val)
+                <option value="{{$val['id']}}">{{$val['name']}}</option>
+            @endforeach
+    </select>
+    </div>
+     edit project s
+    <div class="mb-3">
+    <label for="exampleFormControlTextarea1" class="form-label float-start"><h5>Project Team Members</h5></label>
+    <input class="form-control" name="project_members" mbsc-input data-dropdown="true" data-tags="true" id="tm" type="hidden" />
+    <input class="form-control" id="tm2" type="text" value="{{$info}}" readonly />
+
+    <div id="memberDropdown" style="display: none;">
+        <select id="selectMembers" class="form-control bg-light" style="border: 1px solid #ccc;" >
+            @foreach($userdata as $user)
+                <option value="{{ $user->id }}">{{ $user->name }}</option>
+            @endforeach
+        </select>
+    </div>
+</div>     
+   <!-- task index
+public function index()
+    {
+        $tasks=task::all();
+        return view('task.index' ,compact('tasks'));
+    } -->
+
+        project create
+    <label for="exampleFormControlTextarea1" class="form-label float-start"><h5>Project Team Members</h5></label>
+    <input class="form-control" name="project_members" mbsc-input data-dropdown="true" data-tags="true" id="tm" type="hidden" />
+    <input class="form-control" id="tm2" type="text" value="{{$info}}" readonly />
+
+    <div id="memberDropdown" style="display: none;">
+        <select id="selectMembers" class="form-control bg-light" style="border: 1px solid #ccc; ">
+            @foreach($userdata as $user)
+                <option value="{{ $user->id }}">{{ $user->name }}</option>
+            @endforeach
+        </select>
+    </div>
+</div>
+<script>
+    function showMemberDropdown() {
+        $('#memberDropdown').css('display', 'block');
+    }
+
+    $('#selectMembers').on('change', function () {
+        var selectedOption = $('#selectMembers option:selected');
+        var selectedUserId = selectedOption.val();
+        var selectedUserName = selectedOption.text();
+
+        $('#tm').val($('#tm').val() + selectedUserId + ',');
+        $('#tm2').val($('#tm2').val() + ', ' + selectedUserName);
+
+        $('#memberDropdown').css('display', 'none');
+    });
+
+    // Show dropdown when clicking on the input field
+    $('#tm2').on('click', function () {
+        showMemberDropdown();
+    });
+</script>
+
+
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <style>
+        .select2-container--open {
+    z-index: 1050; /* Adjust this value as needed */
+}
+.modal {
+    z-index: 1060; /* Adjust this value as needed */
+}
+
+.modal-backdrop {
+    z-index: 1055; /* Adjust this value as needed */
+}
+.modal {
+    z-index: 1100; /* Adjust this value to be higher than the dropdown's z-index */
+}
+
+        </style>
+        <div class="card">
+            <div class="card-header bg-dark  text-light">
+                <h1>Edit Project</h1>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ route('project-update', $project->id) }}">
+                    @csrf
+                    @method('PUT')
+                    <div class="form-group">
+                        <label for="project_name">Project Name</label>
+                        <input type="text" class="form-control" id="project_name" name="project_name" value="{{ $project->project_name }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="5" required>{{ $project->description }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="project_start_data">Project Start Date</label>
+                        <input type="date" class="form-control" id="project_start_data" name="project_start_data" value="{{ $project->project_start_data }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="project_delivery_data">Project Delivery Date</label>
+                        <input type="date" class="form-control" id="project_delivery_data" name="project_delivery_data" value="{{ $project->project_delivery_data }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="project_cost">Project Cost</label>
+                        <input type="number" class="form-control" id="project_cost" name="project_cost" value="{{ $project->project_cost }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="project_head">Project Head</label>
+                        <select class="form-control" id="project_head" name="project_head" required>
+                            @foreach($userdata as $user)
+                                <option value="{{ $user->id }}" @if($user->id === $project->project_head) selected @endif>{{ $user->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="project_technology">Project Technology</label>
+                        <input type="text" class="form-control" id="project_technology"name="project_technology" value="{{ $project->project_technology }}" required>
+                    </div>
+                    <div class="mb-3">
+    <label for="exampleFormControlTextarea1" class="form-label float-start"><h5>Project Team Members</h5></label>
+    <select id='selectMembers' class="js-example-basic-multiple form-control bg-light" name="project_members[]" multiple value="{{$info}}">
+        @foreach($userdata as $user)
+            <option value="{{ $user->id }}" @if($project->projectUser->contains('id', $user->id)) selected @endif>
+                {{ $user->name }}
+            </option>
+        @endforeach
+    </select>
+</div>
+ 
+                    <div class="form-group">
+                        <label for="is_active">Is Active</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="is_active" id="active_yes" value="1" @if($project->is_active) checked @endif required>
+                            <label class="form-check-label" for="active_yes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="is_active" id="active_no" value="0" @if(!$project->is_active) checked @endif required>
+                            <label class="form-check-label" for="active_no">No</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-dark" id="btn-update">Update Project</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+               
+        $(document).ready(function() {
+    $('.js-example-basic-multiple').select2();
+});    
+        function members(event){
+    // console.log(window.event.target.options );
+    tm.value+=selectMembers.value+',';
+    tm2.value+=','+selectMembers.options[selectMembers.selectedIndex].text;
+}
+
+        // Handle form submit with SweetAlert confirmation
+        $('#btn-update').on('click', function(e) {
+            e.preventDefault();
+            const form = $(this).closest('form');
+            const projectId = form.data('project-id');
+            const url = `/project/${projectId}`;
+            const csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+            // Use SweetAlert to show the confirmation dialog
+            Swal.fire({
+                title: 'Update Project',
+                text: 'Are you sure you want to update this project?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, update it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+      
+    </script>
+@endsection
+
+
+
+
+
+<!-- paswword in project admin  -->
+username -> varun23
+password -> 12341234    
+<!-- password in project admin ->
+
+
+
+
+
+    
+
+create file in task
+@extends('layouts.app')
+
+@section('content')
+<div class="container mt-3">
+    <div class="card ">
+        <div class="card-body">
+            <div class="text-center my-5 "><h1 style="font-weight:bolder">Task Management</h1></div>
+
+            <form method="post" action="/task" autocomplete="off">
+                @csrf
+                <div class="container">
+                    <div class="row">
+                        <!-- item 1 -->
+                        <div class="col-4">
+                            <div class="mb-3">
+                                <label for="project_id" class="form-label float-start"><h5>Project Name</h5></label>
+                                <select name="project_id" class="form-control bg-light" onchange="subjects(this)" id='project_name'>
+                                    <option value="" hidden>Select Project</option>
+                                    @foreach($projects as $project)
+                                    <option value="{{ $project->id }}">{{ $project->project_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- item 2 -->
+                        <div class="col-4">
+                            <div class="mb-3">
+                                <label for="assigned_by" class="form-label float-start" hidden>
+                                    <!-- <h5>Assign By</h5> -->
+                                </label>
+                                <select name="assigned_by" class="form-control bg-light" required hidden >
+                                    <option value="{{ auth()->user()->id }}" hidden>{{ auth()->user()->name }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- item 3 -->
+                        <div class="col-4">
+                            <div class="mb-3">
+                                <label for="assigned_to" class="form-label float-start" ><h5>Assign To</h5></label>
+                                <select name="assigned_to" class="form-control bg-light" required  id="assignedToSelect" >
+                                    <option value="" hidden>Select User</option>
+                                    @foreach($users as $user)
+                                        @if($user->id !== auth()->user()->id)
+                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- item 4 -->
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="description" class="form-label float-start"><h5>Description</h5></label>
+                                <textarea name="description" class="form-control bg-light" style="border:0" rows="3" required></textarea>
+                            </div>
+                        </div>
+
+                        <!-- item 5 -->
+                        <div class="col-4">
+                            <div class="mb-3">
+                                <label for="task_datetime" class="form-label float-start"><h5>Task Date Time</h5></label>
+                                <input type="datetime-local" id="task_datetime" name="task_datetime" class="form-control bg-light" required>
+                            </div>
+                        </div>
+
+                        <!-- item 6 -->
+                        <div class="col-4">
+                            <div class="mb-3">
+                                <label for="task_name" class="form-label float-start"><h5>Task Name</h5></label>
+                                <input type="text" name="task_name" class="form-control bg-light" required>
+                            </div>
+                        </div>
+
+                    
+
+                        <div class="form-label float-start">
+                            <label for="is_active"><h5>Is Active</h5></label><br>
+                            <label for="active">Active</label>
+                            <input type="radio" name="is_active" value="1" required>
+                            <label for="inactive">Inactive</label>
+                            <input type="radio" name="is_active" value="0" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- submit button -->
+                <div class="d-grid mb-3 container">
+                    <button type="submit" class="btn btn-dark">Submit <i class="fa fa-solid fa-arrow-right"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+
+function subjects(project_name) {
+    var selectedOption = project_name.options[project_name.selectedIndex];
+    var projectId = selectedOption.value;
+    console.log(projectId);
+
+    $.ajax({
+        url: '/projects/getName', 
+        data: { name: projectId },
+        type: 'get',
+        success: function(data) {
+            console.log(data);
+            var assignToSelect = document.getElementById('assignedToSelect');
+            assignToSelect.innerHTML = '<option value="">Select User</option>';
+             
+            data.users.forEach(function(user) {
+                var option = document.createElement('option');
+                option.value = user.id;
+                option.text = user.name;
+                assignToSelect.appendChild(option);
+            });
+        },
+        error: function(xhr, status, error) {
+            console.log(error); 
+        }
+    });
+}
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const taskDateTimeInput = document.getElementById('task_datetime');
+        const now = new Date().toISOString().slice(0, 16); 
+
+        taskDateTimeInput.min = now;
+    });
+           
+</script>
+@endsection
+<!-- task create file -->
+<?php 
+function countOnesInBinary($decimalNumber) {
+    $binaryRepresentation = decbin($decimalNumber); 
+    $count = substr_count($binaryRepresentation, '1'); 
+    return $count;
+}
+
+$number1 = 7;
+$number2 = 8;
+
+$count1 = countOnesInBinary($number1);
+$count2 = countOnesInBinary($number2);
+
+echo "$number1 ($count1)" . PHP_EOL;
+echo "$number2 ($count2)" . PHP_EOL;
+
+?>

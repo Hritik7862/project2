@@ -8,7 +8,6 @@ use App\Models\ProjectUser;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Auth\Events\Validated;
-
 class ProjectsController extends Controller
 {
     /**
@@ -19,13 +18,14 @@ class ProjectsController extends Controller
     public function index()
     {
       $projects = Projects::with('projectUser')->get();
-      // dd($projects[3]->projectUser[1]->project_id);
+      //dd($projects[3]->projectUser['2']->project_id);
 
-    // dd($projects);
+    //dd($projects);
     $userdata = user::all();
         return view('project.index', compact('projects', 'userdata'));
         
         }
+    
 
     /**
      * Show the form for creating a new resource.
@@ -95,9 +95,22 @@ class ProjectsController extends Controller
      */
     public function edit($id)
     {
-        $project = Projects::findOrFail($id);
+        $info = '';
+        $project = Projects::with('projectUser')->findOrFail($id);
+        // $project = Projects::where('id',$id)->with('projectUser')->get();
+        foreach($project->projectUser as $data){
+               $info .= ($data->user->name) .',';
+        }
+        //dd($project);
+
+$userInfo = $project->ProjectUser;
+foreach($userInfo as $value ){
+    $usersId[] = $value->user_id;
+}
+        
+        $info = substr($info,0,-1);
         $userdata = User::all();
-        return view('project.edit', compact('project', 'userdata'));
+        return view('project.edit', compact('project', 'userdata','info','usersId'));
     }
     
     /**
@@ -112,7 +125,7 @@ class ProjectsController extends Controller
     $project = Projects::findOrFail($id);
 
     // Update project data
-    // dd($request);
+    //dd($request);
     $project->project_name = $request->project_name;
     $project->description = $request->description;
     $project->project_start_data = $request->project_start_data;
@@ -129,12 +142,12 @@ class ProjectsController extends Controller
  
     $project->save();
     
-//    $projectMembers = explode(',', $request->project_members);
-//          foreach ($projectMembers as $member) {
-//              if (!empty($member)) {
-//                  $project->projectMembers()->attach((int)$member);
-//              }
-//          }
+   $projectMembers = explode(',', $request->project_members);
+         foreach ($projectMembers as $member) {
+             if (!empty($member)) {
+                 $project->projectMembers()->attach((int)$member);
+             }
+         }
 
 
     return redirect()->route('project.index')->with('success', 'Project updated successfully!');
@@ -155,9 +168,19 @@ class ProjectsController extends Controller
 
         return response()->json(['message' => 'Project deleted successfully!']);
     }
+    
+    public function getName(Request $request) {
+        $projectId = $request->input('name'); 
+        
+        $project = Projects::find($projectId); 
+        
+        if ($project) {
+            $users = $project->users; 
+            return response()->json(['users' => $users]);
+        } else {
+            return response()->json(['users' => []]); 
+        }
+    }
+    
+     
 }
-
-
-
-
-
