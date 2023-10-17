@@ -9,10 +9,13 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Projects;
 use Illuminate\Database\Eloquent\SoftDeletes; 
+use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Model;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable , SoftDeletes; 
+    use HasApiTokens, HasFactory, Notifiable , SoftDeletes, HasRoles; 
    
     /**
      * The attributes that are mass assignable.
@@ -26,7 +29,13 @@ class User extends Authenticatable
         'password',
         'mobile',
         'is_active',
-        'admin'
+        'admin',
+        'gauth_id',
+        'gauth_type',
+        'fb_id',
+        'profile_picture',
+        'isVerified'
+
     ];
 
     /**
@@ -51,10 +60,22 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Projects::class, 'project_user', 'user_id', 'project_id' );
     }
-    public function Admin()
+    // public function Admin()
+    // {
+    //     return $this->admin === 1; 
+    // }
+    public function isAdmin()
     {
-        return $this->admin === 1; 
+        return $this->hasRole('admin') || $this->hasRole('superadmin');
     }
+    
+public function isSuperAdmin()
+{
+    return $this->role === 'superadmin'; 
 }
+
+
+}
+
 
 

@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-3">
-    <div class="card border shadow">
+<div class="container mt-3" style="width: 45rem;">
+    <div class="card shadow-lg p-3 mb-5 bg-body rounded">
         <div class="card-body">
             <div class="text-center my-5"><h1 style="font-weight: bolder">Edit Task</h1></div>
 
@@ -81,12 +81,11 @@
                         </div>
 
                         <!-- Update Button -->
-                        <div class="col-md-12 text-center mt-3">
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-dark btn-lg" id="btn-update">Update</button>
+            
+                            <div class="d-grid gap-2 mb-3">
+                                <button type="submit" class="btn btn-outline-dark btn-lg btn-sm rounded-pill" id="btn-update">Update </button>
                             </div>
                         </div>
-                    </div>
                 </div>
             </form>
         </div>
@@ -138,7 +137,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();
-                }
+                }   
             });
         });
         document.addEventListener('DOMContentLoaded', function() {

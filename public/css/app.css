@@ -1,0 +1,21 @@
+/* public/css/app.css */
+
+#bgimage {
+    background-image: url('/images/bg.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    min-height: 100vh; 
+    
+  
+} 
+/* .class {
+    background: rgba(0,0,0,0.5);
+} */
+/* .element {
+    transition: background-color 0.5s ease;
+  } */
+/* .bg-image {
+    background-color: red; 
+} */
+

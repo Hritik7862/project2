@@ -3,7 +3,11 @@
 @section('content')
 <div class="container">
     <h1>Project Listing</h1>
-    <a href="{{ route('project.create') }}" class="btn btn-dark mb-3">Create New Project</a>
+    @can('create projects', 'superadmin')
+    <a href="{{ route('project.create') }}" class="btn btn-outline mb-3" style="background-color: #A7BAC0;">Create New Project</a>
+@endcan
+
+
 
     @if (session('success'))
         <div class="alert alert-success">
@@ -11,10 +15,11 @@
     </div>
     <script>
         setTimeout(function () {
-            window.location.href = "{{ route('project.index') }}"; 
-        }, 1000); 
+            window.location.href = "{{ route('project.index') }}";
+        }, 1000);
     </script>
             @endif
+            <div class="table-responsive">
             <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
@@ -28,7 +33,10 @@
                         <th>Project Technologie</th>
                         <th>Project Team Members</th>
                         <th>IsActive</th>
-                        <th>Actions</th>
+                        @can('edit projects')
+                       <th>Actions</th>
+            @endcan
+
                     </tr>
                 </thead>
                 <tbody>
@@ -45,6 +53,7 @@
                             <td>{{ $project->project_cost }}</td>
 
                             <td>
+                                <td>
                                    @if ($project->projectHead)
                                        {{ $project->projectHead->name }}
                                    @else
@@ -57,29 +66,33 @@
                                  @foreach ($project->projectUser as $user)
                                      @if ($user->user)
                                          {{ $user->user->name }}
-                                         @if (!$loop->last) 
+                                         @if (!$loop->last)
                                              ,
                                          @endif
                                      @else
-                                       
+
                                      @endif
                                  @endforeach
                              @else
-                               
+
                              @endif
                        </td>
 
                             <td>{{ $project->is_active ? 'Active' : 'Inactive' }}</td>
                             <td>
                                 <div class="d-flex">
-                                    <button class="btn btn-primary btn-edit" data-toggle="modal" data-target="#editModal" data-project-id="{{ $project->id }}"><i class="fas fa-edit"></i></button>
-                                    <!-- <a href="{{ route('project.edit', $project->id) }}" class="btn btn-primary"><i class="fas fa-edit"></i></a> -->
-    
-                                    &nbsp;
-                                    <button class="btn btn-danger btn-delete" data-project-id="{{ $project->id }}"><i class="fas fa-trash-alt"></i></button>
+
+            @can('edit projects')
+                <button class="btn btn-outline-primary btn-edit" data-toggle="modal" data-target="#editModal" data-project-id="{{ $project->id }}"><i class="fas fa-edit"></i></button>
+            @endcan
+             &nbsp;
+            @can('delete projects')
+                <button class="btn btn-outline-danger btn-delete" data-project-id="{{ $project->id }}"><i class="fas fa-trash-alt"></i></button>
+            @endcan
                                 </div>
-                            </td>
-                        </tr>
+                              </td>
+
+                    </tr>
                         @php
                             $count++;
                         @endphp
@@ -88,6 +101,7 @@
             </table>
         </div>
     </div>
+</div>
 </div>
 
 <!-- Bootstrap modal for editing project -->

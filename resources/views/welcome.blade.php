@@ -130,3 +130,25 @@
         </div>
     </body>
 </html>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyBEHyVURRGYPYqcmw78FtBn21cEuMYjhls",
+    authDomain: "sage-mind-398010.firebaseapp.com",
+    projectId: "sage-mind-398010",
+    storageBucket: "sage-mind-398010.appspot.com",
+    messagingSenderId: "888475634262",
+    appId: "1:888475634262:web:b036592d6c0786cc7349f7",
+    measurementId: "G-YXYCBNW7M2"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>

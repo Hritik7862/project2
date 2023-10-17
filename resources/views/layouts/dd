@@ -1595,3 +1595,1782 @@ echo "$number1 ($count1)" . PHP_EOL;
 echo "$number2 ($count2)" . PHP_EOL;
 
 ?>
+$role=Role::all();
+return view('register',compact('role'));
+
+
+
+    protected function validator(array $data)
+    {
+        return Validator::make($data, [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users', 'regex:/(.+)@(.+)\.(.+)/i'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'mobile' => ['required', 'string', 'size:10'],
+        ]);
+    }
+
+    protected function create(array $data)
+    {
+        $user = User::create([
+            'name' => $data['name'],
+            'user_name' => $data['user_name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+            'mobile' => $data['mobile'],
+            'is_active' => $data['is_active'],
+            'admin' => 0, // Default value
+        ]);
+    
+        $role = Role::find($data['role']);
+        if ($role && $role->name === 'superadmin') {
+            $user->admin = 1; 
+            $user->save();
+        }
+    
+        $user->assignRole($data['role']); 
+    
+        return $user->with('success', 'User registered successfully.');
+    }
+    admin wla h
+
+
+    role-list
+    role-create
+    role-edit
+    role-delete
+    project-list
+    project-create
+    project-edit
+    project-delete
+    edit users
+    delete users    
+    view users
+    edit projects
+    delete projects
+    create projects
+    index projects
+    edit tasks
+    delete tasks
+    create tasks
+    index tasks
+    promote users to admin
+    {{ route('manpermissions.store') }}
+
+   
+
+    888475634262-h1l7qgfeluq60lb2b9ibljbs2671jlbq.apps.googleusercontent.com
+
+
+    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
+    
+
+   
+
+   // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyBEHyVURRGYPYqcmw78FtBn21cEuMYjhls",
+  authDomain: "sage-mind-398010.firebaseapp.com",
+  projectId: "sage-mind-398010",
+  storageBucket: "sage-mind-398010.appspot.com",
+  messagingSenderId: "888475634262",
+  appId: "1:888475634262:web:51ad7cf41f2ce8dc7349f7",
+  measurementId: "G-6NX20MHLQN"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+
+
+
+
+@extends('layouts.app')
+
+@section('content')
+    
+<div class="container py-5" >
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card Larger shadow">
+                <div class="card-header  bg-black text-white">{{ __('Users Signup To Website') }}</div>
+
+                <div class="card-body">
+                    <form method="POST" action="{{ route('register') }}">
+                        @csrf
+
+                        <div class="form-group row">
+                            <label for="name" class="col-md-4 col-form-label">{{ __('Name') }}</label>
+                            <div class="col-md-8">
+                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus placeholder="Name">
+                                @error('name')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="user_name" class="col-md-4 col-form-label">{{ __('User Name') }}</label>
+                            <div class="col-md-8">
+                                <input id="user_name" type="text" class="form-control @error('user_name') is-invalid @enderror" name="user_name" value="{{ old('user_name') }}" required autocomplete="user_name" autofocus placeholder="UserName">
+                                @error('user_name')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="phone" class="col-md-4 col-form-label">{{ __('Phone Number') }}</label>
+                            <div class="col-md-8">
+                                <input id="phone" type="text" class="form-control @error('phone') is-invalid @enderror" name="phone" value="{{ old('phone') }}" required autocomplete="off" placeholder="Enter your phone number">
+                                @error('phone')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="email" class="col-md-4 col-form-label">{{ __('Email Address') }}</label>
+                            <div class="col-md-8">
+                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" placeholder="email">
+                                @error('email')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                           
+                        <div class="form-group row">
+                            <label for="password" class="col-md-4 col-form-label">{{ __('Password') }}</label>
+                            <div class="col-md-8">
+                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password" placeholder="Password">
+                                @error('password')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="password-confirm" class="col-md-4 col-form-label">{{ __('Confirm Password') }}</label>
+                            <div class="col-md-8">
+                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password" placeholder="Confirm Password">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="role" class="col-md-4 col-form-label">{{ __('Role') }}</label>
+                            <div class="col-md-8">
+                                <select id="role" class="form-control @error('role') is-invalid @enderror" name="role" required>
+                                    <option value="">Select Role</option>
+                                    @foreach ($roles as $role)
+                                        <option value="{{ $role->id }}" {{ old('role') == $role->id ? 'selected' : '' }}>
+                                            {{ $role->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('role')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                         <input type="hidden" name="admin" value="0">
+                         </div>
+                        <div class="form-group row">
+                            <label class="col-md-4 col-form-label">{{ __('Is Active') }}</label>
+                            <div class="col-md-8">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="is_active" id="is_active_active" value="1" {{ old('is_active') == 1 ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="is_active_active">Active</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="is_active" id="is_active_inactive" value="0" {{ old('is_active') == 0 ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="is_active_inactive">Inactive</label>
+                                </div>
+                                @error('is_active')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        
+                        <div class="form-group row">
+                            <label for="otp" class="col-md-4 col-form-label">{{ __('OTP') }}</label>
+                            <div class="col-md-8">
+                                <input id="otp" type="text" class="form-control @error('otp') is-invalid @enderror" name="otp" required autocomplete="off" placeholder="Enter OTP">
+                                @error('otp')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="form-group row mb-0">
+                            <div class="col-md-8 offset-md-4">
+                                <button type="button" class="btn btn-outline-dark" id="generateOTP">
+                                    {{ __('Generate OTP') }}
+                                </button>
+                                <button type="button" class="btn btn-outline-dark" id="verifyOTP">
+                                    {{ __('Verify OTP') }}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyBEHyVURRGYPYqcmw78FtBn21cEuMYjhls",
+    authDomain: "sage-mind-398010.firebaseapp.com",
+    projectId: "sage-mind-398010",
+    storageBucket: "sage-mind-398010.appspot.com",
+    messagingSenderId: "888475634262",
+    appId: "1:888475634262:web:b036592d6c0786cc7349f7",
+    measurementId: "G-YXYCBNW7M2"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+@endsection
+
+
+710616953806c69ce87b5ad81c31fb2e
+ laravel soceil login
+ 5K5KS7XGQFSTIXDOTYTETY3X5XLARW4D
+
+
+
+ <?php
+namespace App\Http\Controllers;
+
+use Exception;
+use Validator;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Facades\Auth;
+
+class SocialController extends Controller
+{
+    public function redirectFacebook()
+    {
+        return Socialite::driver('facebook')->redirect();
+    }
+
+    public function facebookCallback()
+    {
+        try {
+        
+            $user = Socialite::driver('facebook')->user();
+         
+            $finduser = User::where('fb_id', $user->id)->first();
+        
+            if($finduser){
+         
+                Auth::login($finduser);
+        
+                return redirect()->intended('project');
+         
+            }else{
+                $newUser = User::create([
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'fb_id'=> $user->id,
+                    'password' => encrypt('Test123456')
+                ]);
+        
+                Auth::login($newUser);
+        
+                return redirect()->intended('project');
+            }
+        
+        } catch (Exception $e) {
+            dd($e->getMessage());
+        }
+    }
+} 
+controller aap
+
+
+
+@extends('layouts.app')
+
+@section('content')
+
+<style>
+    /* Add custom CSS styles here */
+    .form-control {
+        background-color: transparent; /* Remove background color */
+        border: 1px solid #ccc; /* Add a border to the input fields */
+        color: #000; /* Set text color */
+    }
+
+    .form-control::placeholder {
+        color: #888; /* Set placeholder text color */
+    }
+</style>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header">{{ __('Project Management Login') }}</div>
+                <div class="card-body">
+                    <form method="POST" action="{{ route('login') }}">
+                        @csrf
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">{{ __('Username') }}</label>
+                            <input id="username" type="text" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" required autocomplete="username" autofocus>
+                            @error('username')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">{{ __('Password') }}</label>
+                            <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
+                            @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+                            <label class="form-check-label" for="remember">{{ __('Remember Me') }}</label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-outline-dark">{{ __('Login') }} <i class="fas fa-sign-in-alt"></i></button>
+                        </div>
+
+                        @if (Route::has('password.request'))
+                            <div class="mt-3">
+                                <a class="btn btn-link" type="button" href="{{ route('password.request') }}">{{ __('Forgot Your Password?') }}</a>
+                            </div>
+                        @endif
+
+                        <div class="flex items-center justify-end mt-4 align-middle">
+                            <a href="{{ url('auth/google') }}" class="btn btn-outline-danger fa fa-google">  Sign in <i class="bi bi-google"></i></a>
+                            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                            <a href="{{ url('auth/facebook') }}" class="btn btn-outline-primary fa fa-facebook"> Login with Facebook</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+login poage card color
+
+public function index()
+{
+    //
+    $users = User::where('admin', false)->get();
+return view('users.index', compact('users'));
+}
+
+
+
+
+public function index()
+{
+    // Fetch all users
+    $users = User::all();
+
+    $regularUsers = $users->where('role', 'user');
+    $adminUsers = $users->where('role', 'admin');
+
+    return view('users.index', compact('users'));
+}
+
+id="bgimage"
+
+
+<div id="mySidebar" class="sidebar">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+  <a href="#">About</a>
+  <a href="#">Services</a>
+  <a href="#">Clients</a>
+  <a href="#">Contact</a>
+</div>
+
+<div id="main">
+  <button class="openbtn" onclick="openNav()">☰ Open Sidebar</button>  
+  <h2>Collapsed Sidebar</h2>
+  <p>Click on the hamburger menu/bar icon to open the sidebar, and push this content to the right.</p>
+</div>
+
+<script>
+function openNav() {
+  document.getElementById("mySidebar").style.width = "250px";
+}
+
+function closeNav() {
+  document.getElementById("mySidebar").style.width = "0";
+  document.getElementById("main").style.marginLeft= "0";
+}
+</script>
+   
+</body>
+</html> 
+
+
+@if (Auth::user()->hasRole('user'))
+<div class="d-flex">
+    <form action="{{ route('task.complete', $task->id) }}" method="POST">
+        @csrf
+        <input type="checkbox" class="task-complete-checkbox" id="task-complete-{{ $task->id }}" data-task-id="{{ $task->id }}" {{ $task->is_completed ? 'checked' : '' }}>
+        <button type="button" id="complete-button-{{ $task->id }}" class="btn btn-primary" style="display: none;">Complete</button>
+    </form>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkbox = document.getElementById("task-complete-{{ $task->id }}");
+        const completeButton = document.getElementById("complete-button-{{ $task->id }}");
+
+        checkbox.addEventListener("change", function () {
+            if (checkbox.checked) {
+                completeButton.style.display = "block";
+            } else {
+                completeButton.style.display = "none";
+            }
+        });
+
+        completeButton.addEventListener("click", function () {
+            // Submit the form when the button is clicked
+            checkbox.form.submit();
+        });
+    });
+</script>
+@endif
+
+
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Task;
+use Illuminate\View\View;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
+
+class AdminController extends Controller
+{
+    public function index()
+    {
+        $adminId = Auth::user()->id;
+
+        $remarks = Task::where('assigned_by', $adminId)
+            ->whereNotNull('remarks')
+            ->get();
+
+        // Render the remarks data as HTML
+        $remarksHtml = View::make('admin.remarks', compact('remarks'))->render();
+
+        return response()->json(['remarks' => $remarksHtml]);
+    }
+}
+
+<a href="javascript:void(0);" onclick="showPopup()"><i class="fa fa-bell  fa-lg" style="color:#111 "></i></a>
+<main class="py-4">
+    @yield('content')
+    @yield('project')
+</main>
+</div>
+<div id="popup" class="popup">
+<span class="popup-close" onclick="closePopup()">&times;</span>
+ <div class="popup-content">
+     <!-- content here -->
+     
+
+ </div>
+</div>
+
+
+<script>
+    // JavaScript function to show the pop-up
+function showPopup() {
+    document.getElementById("popup").style.display = "block";
+}
+
+// JavaScript function to close the pop-up
+function closePopup() {
+    document.getElementById("popup").style.display = "none";
+}
+
+
+function openNav() {
+  document.getElementById("mySidenav").style.width = "250px";
+}
+
+function closeNav() {
+  document.getElementById("mySidenav").style.width = "0";
+}
+</script>
+
+
+
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Task;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
+
+
+class AdminController extends Controller
+{
+
+    public function index()
+{
+    $adminId = Auth::user()->id;
+
+    $remarks = Task::where(function ($query) use ($adminId) {
+            $query->where('assigned_by', $adminId)
+                  ->orWhere(function ($query) use ($adminId) {
+                      $query->where('assigned_to', $adminId)
+                            ->where('assigned_by', '<>', $adminId);
+                  });
+        })
+        ->whereNotNull('remarks')
+        ->get();
+
+    $html = View::make('admin.remarks', compact('remarks'))->render();
+
+    return response()->json(['html' => $html]);
+}
+}
+
+
+<div class="container">
+  
+    <div class="modal fade" id="myModal" role="dialog">
+      <div class="modal-dialog">
+      
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header text-white" style="background-color:rgb(0, 0, 139);">
+          <h4 class="modal-title">Notifcion</h4>
+          </div>
+          <div class="modal-body" id="datashow" >
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    $('#remarks').on('click', function(evt) {
+        $.ajax({
+            url: 'remarks',
+            method: 'get',
+            success: function(data) {
+                var count = data.length;
+                var html = '';
+    
+                if (count > 0) {
+                    for (let i = 0; i < count; i++) {
+                        // Use <div> elements to separate the data
+                        html += `
+                            <div>
+                            <li>
+                               <h4> ${i + 1} ${data[i].assigned_to.name}</h4>
+                         
+                            
+                                ${data[i].remarks}
+                           
+                                ${data[i].task_name}
+                           </li>
+                            <br>`;
+                    }
+                    $('#datashow').html(html); 
+                } else {
+                    $('#datashow').html('<p>No data available</p>');
+                }
+    
+                $('#notificationCount').text(count);
+            }
+        });
+    });
+    
+
+
+    $(document).ready(function () {
+            function fetchNotifications() {
+                $.ajax({
+                    url: 'your_notification_endpoint', // Replace with your actual endpoint
+                    method: 'GET',
+                    success: function (data) {
+                        var notificationsContainer = $('#notificationsContainer');
+                        notificationsContainer.empty();
+
+                        if (data.length > 0) {
+                            for (var i = 0; i < data.length; i++) {
+                                var notification = data[i];
+                                var notificationHtml = '<div class="notification">' +
+                                    '<h4>' + notification.title + '</h4>' +
+                                    '<p>' + notification.message + '</p>' +
+                                    '</div>';
+                                notificationsContainer.append(notificationHtml);
+                            }
+                        } else {
+                            notificationsContainer.html('<p>No notifications available.</p>');
+                        }
+                    },
+                    error: function () {
+                        console.error('Error fetching notifications');
+                    }
+                });
+            }
+
+            // Call fetchNotifications on page load
+            fetchNotifications();
+
+            setInterval(fetchNotifications, 300000); 
+        });
+
+
+        @extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <table class="table table-bordered" id="members-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Age</th>
+                <th>Date of Birth</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+<script>
+$(function() {
+    $('#members-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: '{{ url("members") }}',
+        columns: [
+            { data: 'id', name: 'id' },
+            { data: 'name', name: 'name' },
+            { data: 'email', name: 'email' },
+            { data: 'age', name: 'age' },
+            { data: 'date_of_birth', name: 'date_of_birth' },
+        ]
+    });
+});
+</script>
+@endsection
+
+
+
+});
+
+task index remaerks in data base table 
+@extends('layouts.app')
+
+@section('content')
+    <div class="container">
+        <h1>Task Listing</h1>
+        @can('create tasks', 'superadmin')
+            <a href="{{ route('task.create') }}" class="btn btn-outlinek mb-3" style="background-color: #BABABB;">Create New Task</a>
+        @endcan
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+            <script>
+                setTimeout(function () {
+                    window.location.href = "{{ route('task.index') }}";
+                }, 1000); 
+            </script>
+        @endif
+        <div class="table-responsive">
+            <table id="tasks-table" class="table table-striped">
+                <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>Task Name</th>
+                    <th>Description</th>
+                    <th>Project Name</th>
+                    <th hidden>Assign By</th>
+                    <th>Assign To</th>
+                    <th>Task Date Time</th>
+                    <th>Is Active</th>
+                    <th>Task Completed</th>
+                    <th></th>
+                    @can('edit tasks', 'delete tasks')
+                        <th>Actions</th>
+                    @endcan
+
+                </tr>
+                </thead>
+                <tbody>
+                @php
+                    $count = 1;
+                @endphp
+                @foreach ($tasks as $task)
+                    <tr>
+                        <td>{{ $count }}</td>
+                        <td>{{ $task->task_name }}</td>
+                        <td>{{ $task->description }}</td>
+                        <td>{{ $task->project->project_name }}</td>
+                        <td hidden>{{ $task->assignedBy ? $task->assignedBy->name : 'N/A' }}</td>
+                        <td>{{ $task->assignedTo ? $task->assignedTo->name : '' }}</td>
+                        <td>{{ $task->task_datetime }}</td>
+                        <td>{{ $task->is_active ? 'Active' : 'Inactive' }}</td>
+                        <td>
+                            
+                          @if ($task->is_completed)
+                             Completed
+                          @else
+                              Uncompleted
+                          @endif
+                      </td>
+                      <td>
+                      @if (Auth::user()->hasRole('user'))
+                          <div class="d-flex">
+                              <form action="{{ route('task.complete', $task->id) }}" method="POST">
+                                  @csrf
+                                  <input type="checkbox" class="task-complete-checkbox" data-task-id="{{ $task->id }}" {{ $task->is_completed ? 'checked' : '' }}>
+                                  <input type="text" id="remarks-input-{{ $task->id }}" name="remarks" style="display: none;" placeholder="Add remarks">
+                                  <button type="submit" id="complete-button-{{ $task->id }}" class="btn btn-primary" style="display: none;" onclick="myfun()">Completed</button>
+                              </form>
+                          </div>
+                      @endif
+                  </td>
+                       
+                       
+                        <td>
+                            @if (!Auth::user()->isAdmin() && !Auth::user()->isSuperAdmin())
+                                <div class="d-flex">
+                                    @can('edit tasks')
+                                        <a href="{{ route('task.edit', $task->id) }}" class="btn btn-outline-primary"><i class="fas fa-edit"></i></a>
+                                    @endcan
+                                    &nbsp;
+                                    @can('delete tasks')
+                                        <button class="btn btn-outline-danger btn-delete" data-task-id="{{ $task->id }}"><i class="fas fa-trash-alt"></i></button>
+                                    @endcan
+                                </div>
+                            @endif
+                        </td>
+                     
+                    </tr>
+                    @php
+                        $count++;
+                    @endphp
+                @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editTaskModal" tabindex="-1" role="dialog" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editTaskModalLabel">Edit Task</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script>
+     $(document).ready(function () {
+            // Edit Task Modal
+            $('.btn-edit').on('click', function () {
+                const taskId = $(this).data('task-id');
+                const modal = $('#editTaskModal');
+
+                // Fetch task data using AJAX and populate the modal fields
+                $.ajax({
+                    url: `/task/${taskId}/edit`,
+                    type: 'GET',
+                    success: function (response) {
+                        modal.find('.modal-body').html(response);
+                    },
+                    error: function (error) {
+                        console.error(error);
+                    },
+                });
+            });
+
+            // Update Task
+            $('#updateTaskBtn').on('click', function () {
+                const modal = $('#editTaskModal');
+                const taskId = modal.find('.btn-edit').data('task-id');
+                const formData = modal.find('form').serialize();
+
+                $.ajax({
+                    url: `/task/${taskId}`,
+                    type: 'PUT',
+                    data: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function (response) {
+                        modal.modal('hide');
+                    },
+                    error: function (error) {
+                        console.error(error);
+                    },
+                });
+            });
+           
+            $('.btn-delete').on('click', function () {
+                const taskId = $(this).data('task-id');
+                
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `/task/${taskId}`,
+                            type: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                            },
+                            success: function (response) {
+                             
+                                $(`.btn-delete[data-task-id="${taskId}"]`).closest('tr').remove();
+                                
+                                Swal.fire(
+                                    'Deleted!',
+                                    'The task has been deleted.',
+                                    'success'
+                                );
+                            },
+                            error: function (error) {
+                                console.error(error);
+                            },
+                        });
+                    }
+                });
+            });
+        });
+        $('.task-complete-checkbox').on('change', function () {
+    const taskId = $(this).data('task-id');
+    const completeButton = $(`#complete-button-${taskId}`);
+    const remarksInput = $(`#remarks-input-${taskId}`);
+
+    if ($(this).is(':checked')) {
+        completeButton.show();
+        remarksInput.show(); 
+    } else {
+        completeButton.hide();
+        remarksInput.hide();
+    }
+});
+function myfun() {
+  alert("Are you sure you want to mark this task as completed?");
+}
+        
+    </script>
+@endsection
+
+
+
+
+
+
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="notificationDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Notifications
+    </button>
+    <div class="dropdown-menu" aria-labelledby="notificationDropdown">
+        <div id="notificationList">
+        </div>
+    </div>
+</div>
+
+
+<a id="notificationLink" class="nav-link" href="javascript:void(0);" style="background-color:black;">Notifications</a>
+
+
+
+
+
+
+
+
+
+notifcsion
+
+<!doctype html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <!-- Scripts -->
+    
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+
+
+
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+
+
+    <link rel="dns-prefetch" href="//fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="{{ asset('css/app.css') }}?v=1">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+
+</head>
+
+
+<body id="bgimage">
+    <div id="app">
+        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm"> 
+            <div class="container">
+           
+                <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                    <span class="navbar-toggler-icon"></span>
+                </button> -->
+  
+                
+                <div id="mySidenav" class="sidenav">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+             @auth
+              <li class="nav-item">
+              <a class="nav-link" href="/profile">
+                 <i class='fas fa-user-alt'></i> My Profile
+                </a>
+               </li>
+               
+           
+     
+            @if(auth()->user()->hasRole('superadmin', ))
+
+          
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('manpermissions.index') }}"><i class="fa fa-lock" aria-hidden="true"></i> Permissions</a>
+            </li>
+           
+                <li class="nav-item">
+                    <a class="nav-link" href='/user'><i class="fa fa-users" aria-hidden="true"></i> Users </a>
+
+                </li>
+                
+            @endif
+            <li class="nav-item">
+                <a class="nav-link" href='/project'><i class="fas fa-project-diagram"></i>Projects</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href='/task'><i class="fas fa-tasks"></i> Tasks </a>
+            </li>
+           
+            <li class="nev-item">
+                <a class="nav-link" href='/members'><i class="fa fa-refresh"></i> members</a>
+            </li>
+          @endauth
+           </div>
+           <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; </span>
+           
+           <div  id="navbarSupportedContent">
+   
+                 
+                    <!-- Right Side Of Navbar -->
+                    <ul class="navbar-nav ms-auto">
+                        <!-- Authentication Links -->
+                     
+                        @guest
+
+                            @if (Route::has('login'))
+
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                </li>
+                            @endif
+                           
+                            @if (Route::has('register'))
+                                <li class="nav-item">
+                                    <a class="nav-link" hidden href="{{ route('register') }}">{{ __('Register') }}</a>
+                                </li>
+                            @endif
+                        @else
+                        <br>
+                       
+                        <li class="nav-item dropdown">
+                        <li class="nav-item">
+                            <br>
+                           <!-- <a href="javascript:void(0);" onclick="showPopup()"><i class="fa fa-bell  fa-lg" style="color:#111 "></i></a> -->
+                                                   <div class="dropdown">
+                            <button class="btn btn" id="notificationsDropdown" data-toggle="dropdown">
+                                <i class="fa fa-bell fa-lg" style="color: #111"></i>
+                                <span id="notificationCount" class="badge badge-success "></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="notificationsDropdown">
+                                
+                                <li class="dropdown-header text-white" style="background-color:rgb(0, 0, 139);"><h4>Notifications</h4></li>
+                                <li class="dropdown-divider"></li>
+                                <li id="notificationList"></li>
+                            </ul>
+                        </div>                         
+                         </li>
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                    <img src="{{ asset('storage/' . Auth::user()->profile_picture) }}" alt="{{ Auth::user()->name }}'s Profile Picture" class="profile-picture-small">
+                                    {{ Auth::user()->name }}
+                                    @if(Auth::user()->is_active)
+                                        <i class="fa fa-circle text-success"></i>
+                                    @endif
+                                </a>
+
+             
+                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    
+                                <!-- <a class="dropdown-item" href="profile">
+                                <i class='fas fa-user-alt'></i> My Profile
+                                    </a>    -->
+                                <a class="dropdown-item" href="{{ route('logout') }}"
+                                       onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                       <i class='fas fa-sign-out-alt'></i> {{ __('Logout') }}
+                                    </a>
+                                
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
+                                </div>
+                            </li>
+                        @endguest
+                    </ul>
+
+                </div>
+            </div>
+        </nav>
+  
+        <main class="py-4">
+            @yield('content')
+            @yield('project')
+        </main>
+   
+</body>
+</html>
+<script>
+
+
+
+function openNav() {
+  document.getElementById("mySidenav").style.width = "250px";
+}
+
+function closeNav() {
+  document.getElementById("mySidenav").style.width = "0";
+}
+$(document).ready(function () {
+    var storedCount = localStorage.getItem('notificationCount');
+
+    var count = storedCount ? parseInt(storedCount) : 0;
+
+    $('#notificationCount').text(count);
+
+    $('#notificationsDropdown').on('click', function (evt) {
+        $.ajax({
+            url: 'remarks',
+            method: 'get',
+            success: function (data) {
+                var newCount = data.length;
+                var html = '';
+
+                if (newCount > 0) {
+                    for (let i = 0; i < newCount; i++) {
+                        html += `
+                            <a class="dropdown-item" href="#">
+                                <h4>${i + 1} ${data[i].assigned_to.name}</h4>
+                                ${data[i].remarks}
+                                ${data[i].task_name}
+                            </a>`;
+                    }
+                } else {
+                    html = '<p class="dropdown-item">No notifications available</p>';
+                }
+
+                $('#notificationList').html(html);
+                $('#notificationCount').text(newCount);
+
+                localStorage.setItem('notificationCount', newCount.toString());
+            }
+        });
+    });
+});
+
+</script>
+
+<style>
+   .popup {
+    display: none;
+    position: fixed;
+    top: 45%;
+    left: 50rem !important;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    border-radius: 10px;
+    max-width: 85%;
+    max-height: 80%;
+    overflow: scroll;
+}
+
+.popup-content {
+    text-align: center;
+}
+
+.popup-close {
+    position: absolute;
+    top: 0px;
+    right: 5px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+
+    .profile-picture-small {
+    width: 50px; 
+    height: 50px; 
+    border-radius: 50%; 
+}
+</style>
+<style>
+
+body {
+  font-family: "Lato", sans-serif;
+}
+
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+</style>
+
+
+
+
+
+
+
+
+
+
+
+src="${notification.task.assigned_to.profile_picture}"
+
+
+side navigsion s 
+
+
+     <!--notifasion app.blade.php-->
+
+
+     <!doctype html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <!-- Scripts -->
+    
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+
+
+
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+
+
+    <link rel="dns-prefetch" href="//fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="{{ asset('css/app.css') }}?v=1">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+
+</head>
+
+
+<body id="bgimage">
+    <div id="main">
+        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm"> 
+            <div class="container">
+           
+                <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                    <span class="navbar-toggler-icon"></span>
+                </button> -->
+  
+
+                <div id="mySidenav" class="sidenav">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+             @auth
+              <li class="nav-item">
+              <a class="nav-link" href="/profile">
+                 <i class='fas fa-user-alt'></i> My Profile
+                </a>
+               </li>
+               
+           
+     
+            @if(auth()->user()->hasRole('superadmin', ))
+
+          
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('manpermissions.index') }}"><i class="fa fa-lock" aria-hidden="true"></i> Permissions</a>
+            </li>
+           
+                <li class="nav-item">
+                    <a class="nav-link" href='/user'><i class="fa fa-users" aria-hidden="true"></i> Users </a>
+
+                </li>
+            @endif
+            <li class="nav-item">
+                <a class="nav-link" href='/project'><i class="fas fa-project-diagram"></i>Projects</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href='/task'><i class="fas fa-tasks"></i> Tasks </a>
+            </li>
+           
+            <li class="nev-item">
+                <a class="nav-link" href='/members'><i class="fa fa-refresh"></i> members</a>
+            </li>
+          @endauth
+           </div>
+           <span id="navIcon" style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776;</span>
+           
+           <div  id="navbarSupportedContent">
+   
+                 
+                    <!-- Right Side Of Navbar -->
+                    <ul class="navbar-nav ms-auto">
+                        <!-- Authentication Links -->
+                     
+                        @guest
+
+                            @if (Route::has('login'))
+
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                </li>
+                            @endif
+                           
+                            @if (Route::has('register'))
+                                <li class="nav-item">
+                                    <a class="nav-link" hidden href="{{ route('register') }}">{{ __('Register') }}</a>
+                                </li>
+                            @endif
+                        @else
+                        <br>
+                                       
+                        <li class="nav-item dropdown" >
+                        <li class="nav-item">
+                            <br>
+                             <div class="dropdown dropdownclose">
+                                
+                         <button class="btn btn-dropdown-toggle" type="button" id="notificationLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                 <i class="fa fa-bell fa-lg" style="color: #111"></i>
+                                 <span id="notificationCount" class="badge badge-danger">0</span>
+                             </button>
+                                  
+                             <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="notificationsDropdown" id="notificationDropdown">
+                           <li class="dropdown-header text-white" style="background-color: rgb(0, 0, 139);"><h4>Notifications</h4></li>
+                           <li class="dropdown-divider"></li>
+                           <li id="notificationList"></li>
+                            </ul>
+
+                        </div>                         
+                         </li>
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                    <img src="{{ asset('storage/' . Auth::user()->profile_picture) }}" alt="{{ Auth::user()->name }}'s Profile Picture" class="profile-picture-small">
+
+                                    {{ Auth::user()->name }}
+                                    @if(Auth::user()->is_active)
+                                        <i class="fa fa-circle text-success"></i>
+                                    @endif
+                                </a>
+
+                                                                                             
+                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    
+                               
+                                <a class="dropdown-item" href="{{ route('logout') }}"
+                                       onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                       <i class='fas fa-sign-out-alt'></i> {{ __('Logout') }}
+                                    </a>
+                                
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
+                                </div>
+                            </li>
+                        @endguest
+                    </ul>
+                     
+                </div>
+            </div>
+        </nav>
+
+  
+        <main class="py-4">
+            @yield('content')
+            @yield('project')
+        </main>
+
+</body>
+</html>
+<script>
+
+function openNav() {
+  document.getElementById("mySidenav").style.width = "250px";
+  document.getElementById("main").style.marginLeft = "250px";
+  document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+  // Hide the icon
+  document.getElementById("navIcon").style.display = "none";
+}
+
+function closeNav() {
+  document.getElementById("mySidenav").style.width = "0";
+  document.getElementById("main").style.marginLeft = "0";
+  document.body.style.backgroundColor = "white";
+  // Show the icon
+  document.getElementById("navIcon").style.display = "block";
+}
+function getTimeAgo(date) {
+ let currentTime = new Date();
+    let timeDifference = currentTime - date;
+    let seconds = Math.floor(timeDifference / 1000);
+    let minutes = Math.floor(seconds / 60);
+    let hours = Math.floor(minutes / 60);
+    let days = Math.floor(hours / 24);
+    let months = Math.floor(days / 30);
+
+    if (months > 0) {
+        return `${months} month${months > 1 ? 's' : ''} ago`;
+    } else if (days > 0) {
+        return `${days} day${days > 1 ? 's' : ''} ago`;
+    } else if (hours > 0) {
+        return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    } else if (minutes > 0) {
+        return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    } else {
+        return `${seconds} second${seconds > 1 ? 's' : ''} ago`;
+    }
+}
+
+
+$(document).ready(function () {
+    $('#notificationLink').on('click', function () {
+        var dropdownMenu = $('#notificationDropdown');
+        if (dropdownMenu.is(':hidden')) {
+            updateNotificationCount();
+            dropdownMenu.show();
+        } else {
+            dropdownMenu.hide();
+        }
+    });
+
+    function updateNotificationCount() {
+    $.ajax({
+        url: '/notifications/{taskId}',
+        method: 'GET',
+        success: function (data) {
+        console.log(data)
+            var notificationList = $('#notificationList');
+            var notificationCount = $('#notificationCount');
+
+            notificationList.empty();
+
+            if (data.length > 0) {
+                var unreadCount = 0;
+                data.forEach(function (notification) {
+                    if (notification.read != 1) {
+                        unreadCount++;
+                        var creationDate = new Date(notification.created_at);
+                        var formattedDate = getTimeAgo(creationDate);
+
+                        var item = `
+                            <div class="notification-item">
+                                <div class="notification-content">
+                                    <img src="http://127.0.0.1:8000/storage/${notification.task.assigned_to.profile_picture}" class="profile-picture-small" alt="Profile Picture">
+                                    ${notification.task.assigned_to.name}
+                                    ${notification.task.task_name} ${notification.remark}
+                                                      <br>
+                                                      <span class="timestamp">${formattedDate}</span>
+                                                      </div>
+                                <p><input class="form-check-input buttonhide" type="checkbox" value="" id="${notification.id}"><i class="fa-duotone fa-badge-check"></i></p>
+                            </div>`;
+                        notificationList.append(item);
+                    }
+                });
+
+                notificationCount.text(unreadCount);
+
+                if (unreadCount === 1) {
+                    dropdownMenu.hide();
+                }
+            } else {
+                notificationCount.text('0');
+                notificationList.html('<p class="dropdown-item">No notifications available</p>');
+                dropdownMenu.hide();
+            }
+        },
+        error: function (error) {
+            console.error('Error fetching notifications:', error);
+        }
+    });
+}
+
+
+
+
+
+
+    $(document).on('click', '.buttonhide', function (evt) {
+        var id = this.id;
+        $.ajax({
+            url: "messageread/" + id,
+            method: 'get',
+            success: function (res) {
+                console.log(res);
+            }
+        });
+    });
+
+    updateNotificationCount();
+});
+
+
+
+</script>
+
+<style>
+   .popup {
+    display: none;
+    position: fixed;
+    top: 45%;
+    left: 50rem !important;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    border-radius: 10px;
+    max-width: 85%;
+    max-height: 80%;
+    overflow: scroll;
+}
+
+.popup-content {
+    text-align: center;
+}
+
+.popup-close {
+    position: absolute;
+    top: 0px;
+    right: 5px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+
+    .profile-picture-small {
+    width: 50px; 
+    height: 50px; 
+    border-radius: 50%; 
+}
+</style>
+
+<style>
+    .timestamp {
+    color: #888;
+}
+body {
+  font-family: "Lato", sans-serif;
+  transition: background-color .5s;
+}
+
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 0px;
+}
+
+#main {
+  transition: margin-left .5s;
+  padding: 0.5px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+#notificationDropdown {
+    display: none;
+    position: absolute;
+    top: 100%; 
+    right: 0;
+    min-width: 350px;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    border-radius: 10px;
+}
+
+#notificationList {
+    padding: 5px;
+}
+
+.notification-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between; 
+        margin-bottom: 10px;
+    }
+
+    .notification-content {
+        flex-grow: 1;
+    }
+
+    .form-check-input.buttonhide {
+        margin-left: 10px; 
+        position: relative;
+        top: 1px;
+    }
+    
+</style>
+
+
+aaj task
+
+public function showProjectUsers()
+ 
+     
+
+user
+
+
+
+
+
+app
+
+
+
+public function showProjectUsers($id)
+{
+   
+}
+
+
+
+
+  document.querySelector(".navbar-toggler").style.display = "none";
+  document.querySelector(".navbar-toggler").style.display = "block";
+
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Projects extends Model
+{
+    protected $fillable = [
+        'project_name',
+        'description',
+        'project_start_date',
+        'project_delivery_date',
+        'project_cost',
+        'project_head',
+        'project_technology',
+        'project_status',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
+    public function projectHead()
+    {
+        return $this->belongsTo(User::class, 'project_head');
+    }
+
+    public function projectMembers()
+    {
+        return $this->belongsToMany(User::class, 'project_user', 'project_id', 'user_id');
+    }
+
+    public function projectUser(){
+        return $this->hasMany(ProjectUser::class, 'project_id','id');
+     }
+     public function User(){
+        return $this->belongsToMany(User::class, 'project_user','user_id','id');
+
+     }
+     public function users() {
+        return $this->belongsToMany(User::class, 'project_user', 'project_id', 'user_id','project_user_table_name');
+    }
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'project_id');
+    }
+}
+
+
+auth ka hei  edit delete wla
+(!Auth::user()->isAdmin() && !Auth::user()->isSuperAdmin())
+
+ shi wla code 
+@if (auth()->user()->isAdmin() || auth()->user()->isSuperAdmin())
+<li class="nav-item">
+    <a class="nav-link" href="/user">
+        <i class='fas fa-user-alt'></i> Users
+    </a>
+</li>
+@endif

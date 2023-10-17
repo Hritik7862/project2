@@ -1,62 +1,102 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
+    <div class="container ">
         <h1>Task Listing</h1>
-        <a href="{{ route('task.create') }}" class="btn btn-dark mb-3">Create New Task</a>
+        @can('create tasks', 'superadmin')
+            <a href="{{ route('task.create') }}" class="btn btn-outlinek mb-3" style="background-color: #BABABB;">Create New Task</a>
+        @endcan
         @if (session('success'))
-        <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-    <script>
-        setTimeout(function () {
-            window.location.href = "{{ route('task.index') }}";
-        }, 1000); 
-    </script>
-
+            <div class="alert alert-success">
+                {{ session('success') }} 
+            </div>
+            <script>
+                setTimeout(function () {
+                    window.location.href = "{{ route('task.index') }}";
+                }, 1000); 
+            </script>
         @endif
         <div class="table-responsive">
             <table id="tasks-table" class="table table-striped">
                 <thead>
                 <tr>
-                        <th>S.No</th>
-                        <th>Task Name</th>
-                        <th>Description</th>
-                        <th>Project Name</th>
-                        <th>Assign By</th>
-                        <th>Assign To</th>
-                        <th>Task Date Time</th>
-                        <th>Is Active</th>
+                    <th>S.No</th>
+                    <th>Task Name</th>
+                    <th>Description</th>
+                    <th>Project Name</th>
+                    <th hidden>Assign By</th>
+                    <th>Assign To</th>
+                    <th>Task Date Time</th>
+                    <th>Is Active</th>
+                    <th>Task Completed</th>
+                    <th></th>
+                    @can('edit tasks', 'delete tasks')
                         <th>Actions</th>
-                    </tr>
-                   </thead>
+                    @endcan
+
+                </tr>
+                </thead>
                 <tbody>
                 @php
-                        $count = 1;
+                    $count = 1;
+                @endphp
+                @foreach ($tasks as $task)
+                    <tr>
+                        <td>{{ $count }}</td>
+                        <td>{{ $task->task_name }}</td>
+                        <td>{{ $task->description }}</td>
+                        <td>{{ $task->project->project_name }}</td>
+                        <td hidden>{{ $task->assignedBy ? $task->assignedBy->name : 'N/A' }}</td>
+                        <td>{{ $task->assignedTo ? $task->assignedTo->name : '' }}</td>
+                        <td>{{ $task->task_datetime }}</td>
+                        <td>{{ $task->is_active ? 'Active' : 'Inactive' }}</td>
+                        <td>
+                          @if ($task->is_completed)
+                              Completed
+                          @else
+                              @if ($task->notifications->count() > 0)
+                                  Completed
+                              @else
+                                  Uncompleted
+                              @endif
+                          @endif
+                      </td>
+
+                      <td>
+  @if (Auth::user()->hasRole('user'))
+    <div class="d-flex">
+      <form method="post" action="{{ route('saveTaskCompletion', $task->id) }}">
+        @csrf
+        <input type="checkbox" class="task-complete-checkbox" data-task-id="{{ $task->id }}" name="is_completed" value="1" style="{{ $task->notifications->where('is_completed', 1)->count() > 0 ? 'display: none;' : '' }}" onchange="myfun({{ $task->id }})">
+        <input type="text" id="remarks-input-{{ $task->id }}" name="remark" style="display: none;" placeholder="Add a remark">
+        <button type="submit" id="complete-button-{{ $task->id }}" class="btn btn-primary" style="display: none;">Completed</button>
+        <input type="hidden" name="task_id" value="{{ $task->id }}">
+      </form>
+    </div>
+  @endif
+</td>
+
+                       
+                       
+                        <td>
+                            @if (auth()->user()->isAdmin() || auth()->user()->isSuperAdmin())
+                                <div class="d-flex">
+                                    @can('edit tasks')
+                                        <a href="{{ route('task.edit', $task->id) }}" class="btn btn-outline-primary"><i class="fas fa-edit"></i></a>
+                                    @endcan
+                                    &nbsp;
+                                    @can('delete tasks')
+                                        <button class="btn btn-outline-danger btn-delete" data-task-id="{{ $task->id }}"><i class="fas fa-trash-alt"></i></button>
+                                    @endcan
+                                </div>
+                            @endif
+                        </td>
+                     
+                    </tr>
+                    @php
+                        $count++;
                     @endphp
-                    @foreach ($tasks as $task)
-                        <tr>
-                            <td>{{ $count }}</td>
-                            <td>{{ $task->task_name }}</td>
-                            <td>{{ $task->description }}</td>
-                            <td>{{ $task->project->project_name }}</td>
-                            <td>{{ $task->assignedBy ? $task->assignedBy->name : 'N/A' }}</td>
-                            <td>{{ $task->assignedTo ? $task->assignedTo->name : '' }}</td>
-                            <td>{{ $task->task_datetime }}</td>
-                            <td>{{ $task->is_active ? 'Active' : 'Inactive' }}</td>
-                            <td>
-                            <div class="d-flex">
-                            <a href="{{ route('task.edit', $task->id) }}" class="btn btn-primary" id="openEditPopup"><i class="fas fa-edit"></i></a>
-                                <!-- <button class="btn btn-primary btn-edit" data-toggle="modal" data-target="#editTaskModal" data-task-id="{{ $task->id }}"><i class="fas fa-edit"></i></button> -->
-                                &nbsp;
-                                <button class="btn btn-danger btn-delete" data-task-id="{{ $task->id }}"><i class="fas fa-trash-alt"></i></button>
-                            </div>
-                            </td>
-                        </tr>
-                        @php
-                            $count++;
-                        @endphp
-                    @endforeach
+                @endforeach
                 </tbody>
             </table>
         </div>
@@ -73,10 +113,12 @@
                 </div>
                 <div class="modal-body">
                 </div>
-                </div>
             </div>
         </div>
     </div>
+
+
+
 
     <script>
      $(document).ready(function () {
@@ -85,7 +127,6 @@
                 const taskId = $(this).data('task-id');
                 const modal = $('#editTaskModal');
 
-                // Fetch task data using AJAX and populate the modal fields
                 $.ajax({
                     url: `/task/${taskId}/edit`,
                     type: 'GET',
@@ -157,8 +198,27 @@
                 });
             });
         });
+        $('.task-complete-checkbox').on('change', function () {
+        const taskId = $(this).data('task-id');
+        const remarksInput = $(`#remarks-input-${taskId}`);
+        const completeButton = $(`#complete-button-${taskId}`);
+
+        if ($(this).is(':checked')) {
+            remarksInput.show(); 
+            completeButton.show();
+        } else {
+            remarksInput.hide();
+            completeButton.hide();
+        }
+    });
+function myfun() {
+  alert("Are you sure you want to mark this task as completed?");
+}
+      
+
     </script>
 @endsection
+
 
 
 

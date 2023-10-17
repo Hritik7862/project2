@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use DB;
+use Hash;
 use App\Models\User;
+use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
 use League\Flysystem\Visibility;
+use Illuminate\Routing\Controller;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
+    
 
 class UserController extends Controller
 {
@@ -15,11 +21,15 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        //
-        $users = User::where('admin', false)->get();
+{
+    // Fetch all users
+    $users = User::all();
+
+    $regularUsers = $users->where('role', 'user');
+    $adminUsers = $users->where('role', 'admin');
+
     return view('users.index', compact('users'));
-    }
+}
 
     /**
      * Show the form for creating a new resource.
@@ -50,6 +60,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
+    
         //
     }
 
@@ -133,6 +144,20 @@ public function showAdminListing()
     return view('users.admin-listing', compact('adminUsers'));
 }
 
+public function updatePermissions(Request $request)
+{
+    $permissions = $request->input('permissions');
+
+    foreach ($permissions as $roleName => $permissionNames) {
+        $role = Role::where('name', $roleName)->first();
+
+        if ($role) {
+            $role->syncPermissions($permissionNames);
+        }
+    }
+
+    return redirect()->route('manage.permissions')->with('success', 'Permissions updated successfully');
+}
 
 }
 

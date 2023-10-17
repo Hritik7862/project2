@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Task;
 use App\Models\User;
 use App\Models\Projects;
 use App\Models\ProjectUser;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
 use Illuminate\Auth\Events\Validated;
+
 class ProjectsController extends Controller
 {
     /**
@@ -17,7 +21,9 @@ class ProjectsController extends Controller
      */
     public function index()
     {
+        
       $projects = Projects::with('projectUser')->get();
+     
       //dd($projects[3]->projectUser['2']->project_id);
 
     //dd($projects);
@@ -66,7 +72,7 @@ class ProjectsController extends Controller
                 $project->projectMembers()->attach((int)$member);
              }
          }
-        //  dd($request->all());
+        // dd($request->all());
 
          return redirect()->route('project.index')->with('success', 'Project created successfully!');
 
@@ -84,7 +90,7 @@ class ProjectsController extends Controller
      */
     public function show($id)
     {
-        //
+        //  
     }
 
     /**
@@ -169,18 +175,40 @@ foreach($userInfo as $value ){
         return response()->json(['message' => 'Project deleted successfully!']);
     }
     
+
     public function getName(Request $request) {
-        $projectId = $request->input('name'); 
+        $projectId = $request->input('name');
         
-        $project = Projects::find($projectId); 
+        $project = Projects::find($projectId);
         
         if ($project) {
-            $users = $project->users; 
+            $users = $project->projectMembers;
             return response()->json(['users' => $users]);
         } else {
-            return response()->json(['users' => []]); 
+            return response()->json(['users' => []]);
         }
     }
     
+    
      
+    public function showProjectUsers()
+    {
+        $projects = Projects::all(); 
+        return view('project_users', compact('projects'));
+    }
+
+    public function projectDetails($id)
+{
+    $project = Projects::findOrFail($id);
+
+    $tasks = Task::where('project_id', $id)
+        ->with('assignedTo', 'assignedBy')
+        ->get();
+
+    return view('project_details', compact('project', 'tasks'));
 }
+
+}
+
+
+

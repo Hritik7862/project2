@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
+use Spatie\Permission\Models\Permission;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -22,9 +24,31 @@ class AuthServiceProvider extends ServiceProvider
      * @return void
      */
     public function boot()
-    {
-        $this->registerPolicies();
+{
+    $this->registerPolicies();
+
+    Gate::define('view-completed-tasks', function ($user) {
+        return $user->Admin() || $user->SuperAdmin();
+    });
 
         //
+
+
+    $permissions = [
+        'edit users',
+        'delete users',
+        'view users',
+    ];
+
+    foreach ($permissions as $permission) {
+        Permission::firstOrCreate(['name' => $permission]);
     }
 }
+
+
+
+    }
+
+
+
+

@@ -1,19 +1,19 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-3">
-    <div class="card shadow-lg p-3 mb-5 bg-body rounded">
+<div class="container mt-3"  style="width: 45rem;">
+    <div class="card shadow-lg p-3 mb-5 bg-body rounded ">
         <div class="card-body">
-            <div class="text-center my-5">
+            <div class="text-center my-5 ">
                 <h1 style="font-weight: bold;">Task Management</h1>
             </div>
 
             <form method="post" action="/task" autocomplete="off">
                 @csrf
-                <div class="container">
-                    <div class="row">
+                <div class="container" style="background: rgba(255, 99, 71, 0);">
+                    <div class="row ">
                         <!-- item 1 -->
-                        <div class="col-md-4">
+                        <div class="col-md-4 ">
                             <div class="mb-3">
                                 <label for="project_id" class="form-label float-start"><h5>Project Name</h5></label>
                                 <select name="project_id" class="form-control bg-light" onchange="subjects(this)" id='project_name'>
@@ -87,7 +87,7 @@
 
                     <!-- submit button -->
                     <div class="d-grid gap-2 mb-3">
-                        <button name="btn" value="project" class="btn btn-dark btn-sm rounded-pill">Submit <i class="fa fa-solid fa-arrow-right"></i></button>
+                        <button name="btn" value="project" class=" btn btn-outline-dark btn-sm rounded-pill">Submit <i class="fa fa-solid fa-arrow-right"></i></button>
                     </div>
                 </div>
             </form>
@@ -100,7 +100,7 @@
 function subjects(project_name) {
     var selectedOption = project_name.options[project_name.selectedIndex];
     var projectId = selectedOption.value;
-    console.log(projectId);
+    // console.log(projectId);
 
     $.ajax({
         url: '/projects/getName', 

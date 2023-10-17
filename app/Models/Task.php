@@ -18,6 +18,8 @@ class Task extends Model
         'task_name',
         'task_status',
         'is_active',
+        'is_completed',
+        'remarks',
     ];
     
     public function project()
@@ -34,4 +36,14 @@ class Task extends Model
     {
         return $this->belongsTo(User::class, 'assigned_to' , 'id');
     }
+    public function hasNotifications()
+{
+    return $this->notifications()->exists();
+}
+
+public function notifications()
+{
+    return $this->hasMany(Notification::class);
+}
+
 }

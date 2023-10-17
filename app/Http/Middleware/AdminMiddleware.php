@@ -20,7 +20,7 @@ class AdminMiddleware
             return $next($request);
         }
     
-        return redirect('/project'); // Redirect to another route or show an error message
+        return redirect('/project'); 
     }
     
 }

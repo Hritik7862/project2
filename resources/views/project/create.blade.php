@@ -2,9 +2,9 @@
 
 @section('project')
 
-<div class="container mt-3">
-    <div class="card shadow-lg p-3 mb-5 bg-body rounded">
-        <div class="card-body">
+<div class="container mt-3" style="width: 45rem;">
+    <div class="card shadow-lg p-3 mb-5 bg-body rounded" >
+        <div class="card-body" > 
             <h1 class="card-title text-center font-weight-bold mb-4">Project Management</h1>
 
             <form method="post" action="{{ url('/project') }}" autocomplete="off">
@@ -86,7 +86,7 @@
                 </div>
 
                 <div class="d-grid gap-2 mb-3">
-                        <button name="btn" value="project" class="btn btn-dark btn-sm rounded-pill">Submit <i class="fa fa-solid fa-arrow-right"></i></button>
+                        <button name="btn" value="project" class="btn btn-outline-dark btn-sm rounded-pill">Submit <i class="fa fa-solid fa-arrow-right"></i></button>
                     </div>
             </form>
         </div>

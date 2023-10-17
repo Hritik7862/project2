@@ -1,12 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Models\User;
+use App\Models\User; 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Task;
 use App\Models\Projects;
+use Illuminate\Support\Facades\Auth;    
 
 class TaskController extends Controller
 {
@@ -15,18 +15,23 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-public function index()
+    public function index()
     {
+        $userId = Auth::id();
+
         $tasks = Task::select('tasks.*')
             ->leftJoin('users as assignedBy', 'tasks.assigned_by', '=', 'assignedBy.id')
             ->leftJoin('users as assignedTo', 'tasks.assigned_to', '=', 'assignedTo.id')
             ->whereNull('assignedBy.deleted_at')
             ->whereNull('assignedTo.deleted_at')
+            ->where(function ($query) use ($userId) {
+                $query->where('tasks.assigned_by', $userId)
+                    ->orWhere('tasks.assigned_to', $userId);
+            })
             ->get();
+        return view('task.index', compact('tasks'));
 
-            return view('task.index' ,compact('tasks'));  
-          }
-
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -36,9 +41,8 @@ public function index()
     public function create()
     {
         //
+        
         $projects = Projects::with('projectMembers')->get();
-        // dd($projects);
-        // Fetch all users to populate the "Assign By" and "Assign To" dropdowns
         $users = User::all();
 
         return view('task.create', compact('projects','users'));
@@ -160,9 +164,24 @@ public function index()
                 return response()->json(['message' => 'Failed to delete task.'], 500);
             }
         }
-   
+        public function complete(Request $request, Task $task)
+        {
+            $request->validate([
+                'remarks' => 'nullable|string',
+            ]);
+        
+            $task->update([
+                'is_completed' => !$task->is_completed,
+                'remarks' => $request->input('remarks'), 
+            ]);
+        
+            return redirect()->back()->with('success', 'Task marked as completed.');
+        }
+        
+        
         
 }
+
 
 
 

@@ -57,7 +57,7 @@
                     <select onchange="members()" id='selectMembers' class="form-control bg-light js-example-basic-multiple" name="states[]" multiple="multiple" style="border: 1px solid #ccc; display: none;">
                    <option style="display: none;"></option>
                    @foreach($userdata as $user)
-                   <option style="background:<?= (in_array($user->id,$usersId))?'yellow':'' ?>" value="{{ $user->id }}" @if($project->projectUser->contains('id', $user->id)) selected class="highlighted" @endif>
+                   <option style="background:<?= (in_array($user->id,$usersId))?'DarkGrey':'' ?>" value="{{ $user->id }}" @if($project->projectUser->contains('id', $user->id)) selected class="highlighted" @endif>
                        {{ $user->name }}
                    </option>
                    @endforeach
